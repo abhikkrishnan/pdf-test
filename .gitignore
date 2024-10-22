@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+### custom ###
+src/main/java/com/pdf/services/old-files/*
+        src/main/resources/pdfs/*
