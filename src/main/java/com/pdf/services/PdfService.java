@@ -27,6 +27,8 @@ import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 
+
+
 @Service
 public class PdfService {
     private Logger logger = LoggerFactory.getLogger(PdfService.class);
@@ -78,76 +80,133 @@ public class PdfService {
     }
 
     class Watermark extends PdfPageEventHelper {
+
         @Override
         public void onEndPage(PdfWriter writer, Document document) {
             PdfContentByte canvas = writer.getDirectContentUnder();
-            Font watermarkFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 50, Font.ITALIC, new Color(200, 200, 200));
+    
+            // Dynamically calculate the font size based on page size
+            float fontSize = calculateFontSize(document.getPageSize());
+    
+            // Define the font for the watermark with dynamic size
+            Font watermarkFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, fontSize, Font.ITALIC, new Color(200, 200, 200));
             Phrase watermark = new Phrase("Test document", watermarkFont);
-
-            // Set opacity
+    
+            // Set opacity for the watermark
             PdfGState gState = new PdfGState();
-            gState.setFillOpacity(0.3f); 
-
-            // Set diagonal position
-            float x = (document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin()) / 2;
-            float y = (document.getPageSize().getHeight() - document.topMargin() - document.bottomMargin()) / 2;
-
-            // Rotate to make it diagonal
+            gState.setFillOpacity(0.3f);
+    
+            // Calculate center position for watermark
+            float x = (document.right() + document.left()) / 2;
+            float y = (document.top() + document.bottom()) / 2;
+    
+            // Rotate the watermark diagonally
             canvas.saveState();
             canvas.setGState(gState);
             canvas.beginText();
-            canvas.setFontAndSize(watermarkFont.getBaseFont(), 50);
+            canvas.setFontAndSize(watermarkFont.getBaseFont(), fontSize);
             canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, watermark.getContent(), x, y, 45);
             canvas.endText();
             canvas.restoreState();
         }
-
+    
         @Override
         public void onStartPage(PdfWriter writer, Document document) {
             PdfContentByte canvas = writer.getDirectContent();
-            Phrase header = new Phrase("TechArchitect - Header", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12));
-            Phrase footer = new Phrase("TechArchitects", FontFactory.getFont(FontFactory.HELVETICA, 12));
-            
-            // Add header
+    
+            // Dynamically calculate the font size based on page size
+            float fontSize = calculateFontSize(document.getPageSize());
+    
+            // Define the fonts for the header and footer with dynamic size
+            Phrase header = new Phrase("TechArchitect - Header", FontFactory.getFont(FontFactory.HELVETICA_BOLD, fontSize));
+            Phrase footer = new Phrase("TechArchitects", FontFactory.getFont(FontFactory.HELVETICA, fontSize));
+    
+            // Calculate the top and bottom positions dynamically based on the page size
+            float headerY = document.top() - (fontSize+1); // A bit above the top margin
+            float footerY = document.bottom(); // A bit below the bottom margin
+    
+            // Add header aligned to the left
             canvas.beginText();
-            canvas.setFontAndSize(header.getFont().getBaseFont(), 12);
-            canvas.showTextAligned(PdfContentByte.ALIGN_LEFT, "TechArchitect - Header", document.left(), document.top() + 10, 0);
+            canvas.setFontAndSize(header.getFont().getBaseFont(), fontSize);
+            canvas.showTextAligned(PdfContentByte.ALIGN_LEFT, header.getContent(), document.left(), headerY, 0);
             canvas.endText();
-            
-            // Add footer
+    
+            // Add footer aligned to the right
             canvas.beginText();
-            canvas.setFontAndSize(footer.getFont().getBaseFont(), 12);
-            canvas.showTextAligned(PdfContentByte.ALIGN_RIGHT, "TechArchitects", document.right(), document.bottom() - 10, 0);
+            canvas.setFontAndSize(footer.getFont().getBaseFont(), fontSize);
+            canvas.showTextAligned(PdfContentByte.ALIGN_RIGHT, footer.getContent(), document.right(), footerY, 0);
             canvas.endText();
         }
- 
+    
+        // Helper method to calculate font size based on the page size
+        private float calculateFontSize(Rectangle pageSize) {
+            // Get diagonal size of the page (Pythagorean theorem for width and height)
+            float diagonal = (float) Math.sqrt(Math.pow(pageSize.getWidth(), 2) + Math.pow(pageSize.getHeight(), 2));
+    
+            // Map the diagonal length to a font size between 12 and 26
+            // Assuming A6 to A1 ranges approximately from 300 to 2400 diagonal size
+            float minDiagonal = 300;  // Approximate diagonal for A6
+            float maxDiagonal = 2400; // Approximate diagonal for A1
+    
+            // Scale the font size linearly between 12 and 26 based on diagonal
+            float minFontSize = 9;
+            float maxFontSize = 32;
+    
+            // Clamp the diagonal size between minDiagonal and maxDiagonal
+            diagonal = Math.max(minDiagonal, Math.min(maxDiagonal, diagonal));
+    
+            // Linear interpolation to calculate the font size
+            return minFontSize + (diagonal - minDiagonal) * (maxFontSize - minFontSize) / (maxDiagonal - minDiagonal);
+        }
     }
+    
+    
 
-    public ByteArrayInputStream manipulate_pdf() {
-        logger.info("Create PDF Started : ");
+    public ByteArrayInputStream manipulate_pdf(Rectangle targetPageSize) {
+        logger.info("Create PDF Started ");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Document document = new Document(PageSize.A4, 35, 35, 25, 25);
+    
+        // Dynamically calculate the margins based on page size
+        float[] margins = calculateMargins(targetPageSize);
+        float marginLeft = margins[0];
+        float marginRight = margins[1];
+        float marginTop = margins[2];
+        float marginBottom = margins[3];
+    
+        // Create the document with dynamically calculated margins
+        Document document = new Document(targetPageSize, marginLeft, marginRight, marginTop, marginBottom);
         Rectangle pageSize = null;
-
+    
         try {
             PdfWriter writer = PdfWriter.getInstance(document, out);
             Watermark event = new Watermark();
             writer.setPageEvent(event);
-
+    
             document.open();
-
-
-            // Add a new page before importing content from existing PDF
-            // document.newPage();
-
+    
             // Importing an existing PDF page
-            File file = new File("src/main/resources/pdf/existing.pdf"); 
+            File file = new File("src/main/resources/pdf/existing.pdf");
             PdfReader reader = new PdfReader(new FileInputStream(file));
-            pageSize = reader.getPageSize(1);
+            pageSize = reader.getPageSize(1); // Original size of the imported PDF page
+    
             PdfContentByte contentByte = writer.getDirectContent();
             PdfImportedPage page = writer.getImportedPage(reader, 1);
-            contentByte.addTemplate(page, 0, 0);
-
+    
+            // Calculate scaling factors to fit the imported page into the target size (considering margins)
+            float availableWidth = targetPageSize.getWidth() - marginLeft - marginRight;
+            float availableHeight = targetPageSize.getHeight() - marginTop - marginBottom;
+    
+            float scaleX = availableWidth / pageSize.getWidth();
+            float scaleY = availableHeight / pageSize.getHeight();
+            float scale = Math.min(scaleX, scaleY); // Maintain aspect ratio by using the smaller scaling factor
+    
+            // Calculate the offset to center the content on the new page, considering margins
+            float offsetX = marginLeft + (availableWidth - (pageSize.getWidth() * scale)) / 2;
+            float offsetY = marginBottom + (availableHeight - (pageSize.getHeight() * scale)) / 2;
+    
+            // Add the template, scaling and centering it on the new page size with margins
+            contentByte.addTemplate(page, scale, 0, 0, scale, offsetX, offsetY);
+    
             reader.close();
         } catch (DocumentException | IOException ex) {
             logger.error("Error occurred: {}", ex.getMessage());
@@ -156,17 +215,36 @@ public class PdfService {
                 document.close();
             }
         }
-
+    
         if (pageSize != null) {
-            if (pageSize.equals(PageSize.A4)) {
-                logger.info("Page size of the imported PDF: A4");
-            } else if (pageSize.equals(PageSize.A3)) {
-                logger.info("Page size of the imported PDF: A3");
-            } else {
-                logger.info("Page size of the imported PDF: " + pageSize);
-            }
+            logger.info("Page size of the imported PDF: " + pageSize);
         }
-
+    
         return new ByteArrayInputStream(out.toByteArray());
     }
+    
+    // Helper method to calculate dynamic margins based on the page size
+    private float[] calculateMargins(Rectangle pageSize) {
+        // Get diagonal size of the page (Pythagorean theorem for width and height)
+        float diagonal = (float) Math.sqrt(Math.pow(pageSize.getWidth(), 2) + Math.pow(pageSize.getHeight(), 2));
+    
+        // Map diagonal to margin sizes
+        float minDiagonal = 500;  // Approximate diagonal for A6
+        float maxDiagonal = 4400; // Approximate diagonal for A1
+    
+        // Minimum and maximum margins
+        float minMargin = 10; // Small margin for smaller pages (like A6)
+        float maxMargin = 60; // Larger margin for larger pages (like A1)
+    
+        // Clamp the diagonal size between minDiagonal and maxDiagonal
+        diagonal = Math.max(minDiagonal, Math.min(maxDiagonal, diagonal));
+    
+        // Calculate margins proportionally (linear interpolation between minMargin and maxMargin)
+        float margin = minMargin + (diagonal - minDiagonal) * (maxMargin - minMargin) / (maxDiagonal - minDiagonal);
+    
+        // Return equal margins for left, right, top, bottom
+        return new float[] { margin, margin, margin, margin };
+    }
+    
+    
 }
