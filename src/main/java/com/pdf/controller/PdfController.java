@@ -23,7 +23,7 @@ public class PdfController {
 
         ByteArrayInputStream pdf = pdfService.createPdf();
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Content-Disposition", "inline; filename=springboot.pdf");
+        httpHeaders.add("Content-Disposition", "inline; filename=test.pdf");
         return ResponseEntity
                 .ok()
                 .headers(httpHeaders)
