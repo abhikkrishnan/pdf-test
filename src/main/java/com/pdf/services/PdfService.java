@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,11 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
+import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfGState;
 import com.lowagie.text.pdf.PdfImportedPage;
@@ -117,5 +120,53 @@ public class PdfService {
             canvas.showTextAligned(PdfContentByte.ALIGN_RIGHT, "TechArchitects", document.right(), document.bottom() - 10, 0);
             canvas.endText();
         }
+ 
+    }
+
+    public ByteArrayInputStream manipulate_pdf() {
+        logger.info("Create PDF Started : ");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4, 35, 35, 25, 25);
+        Rectangle pageSize = null;
+
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, out);
+            Watermark event = new Watermark();
+            writer.setPageEvent(event);
+
+            document.open();
+
+
+            // Add a new page before importing content from existing PDF
+            // document.newPage();
+
+            // Importing an existing PDF page
+            File file = new File("src/main/resources/pdf/existing.pdf"); 
+            PdfReader reader = new PdfReader(new FileInputStream(file));
+            pageSize = reader.getPageSize(1);
+            PdfContentByte contentByte = writer.getDirectContent();
+            PdfImportedPage page = writer.getImportedPage(reader, 1);
+            contentByte.addTemplate(page, 0, 0);
+
+            reader.close();
+        } catch (DocumentException | IOException ex) {
+            logger.error("Error occurred: {}", ex.getMessage());
+        } finally {
+            if (document.isOpen()) {
+                document.close();
+            }
+        }
+
+        if (pageSize != null) {
+            if (pageSize.equals(PageSize.A4)) {
+                logger.info("Page size of the imported PDF: A4");
+            } else if (pageSize.equals(PageSize.A3)) {
+                logger.info("Page size of the imported PDF: A3");
+            } else {
+                logger.info("Page size of the imported PDF: " + pageSize);
+            }
+        }
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
 }
