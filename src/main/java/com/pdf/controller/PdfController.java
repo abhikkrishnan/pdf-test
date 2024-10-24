@@ -21,10 +21,10 @@ public class PdfController {
     @Autowired
     private PdfService pdfService;
 
-    @PostMapping("/createPdf")
+    @PostMapping("api/v0/createPdf")
     public ResponseEntity<InputStreamResource> createPdf() {
 
-        ByteArrayInputStream pdf = pdfService.createPdf();
+        ByteArrayInputStream pdf = pdfService.createPdf(false);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Content-Disposition", "inline; filename=test.pdf");
         return ResponseEntity
@@ -34,7 +34,20 @@ public class PdfController {
                 .body(new InputStreamResource(pdf));
     }
 
-    @PostMapping("/manipulatePdf")
+    @PostMapping("api/v0/createPdf_merged")
+    public ResponseEntity<InputStreamResource> createPdf_merged() {
+
+        ByteArrayInputStream pdf = pdfService.createPdf(true);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Content-Disposition", "inline; filename=test.pdf");
+        return ResponseEntity
+                .ok()
+                .headers(httpHeaders)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(pdf));
+    }
+
+    @PostMapping("api/v0/manipulatePdf")
     public ResponseEntity<InputStreamResource> manipulatepdf(@RequestParam String psize) {
 
         Rectangle pageSize = mapPageSize(psize);
@@ -43,7 +56,7 @@ public class PdfController {
             return ResponseEntity.badRequest().body(null); // Return error if page size is not valid
         }
 
-        ByteArrayInputStream pdf = pdfService.manipulate_pdf(pageSize);
+        ByteArrayInputStream pdf = pdfService.manipulate_pdf(pageSize,true);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Content-Disposition", "inline; filename=test.pdf");
         return ResponseEntity
@@ -53,19 +66,18 @@ public class PdfController {
                 .body(new InputStreamResource(pdf));
     }
 
-            // Helper method to map the psize string to a Rectangle object
-            private Rectangle mapPageSize(String psize) {
-                switch (psize.toUpperCase()) {
-                    case "A1": return PageSize.A1;
-                    case "A2": return PageSize.A2;
-                    case "A3": return PageSize.A3;
-                    case "A4": return PageSize.A4;
-                    case "A5": return PageSize.A5;
-                    case "A6": return PageSize.A6;
-                    default: return null; // Return null for invalid page size
-                }
-            }
-
+    // Helper method to map the psize string to a Rectangle object
+    private Rectangle mapPageSize(String psize) {
+        switch (psize.toUpperCase()) {
+            case "A1": return PageSize.A1;
+            case "A2": return PageSize.A2;
+            case "A3": return PageSize.A3;
+            case "A4": return PageSize.A4;
+            case "A5": return PageSize.A5;
+            case "A6": return PageSize.A6;
+            default: return null; // Return null for invalid page size
+        }
+    }
 
 
 }

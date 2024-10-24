@@ -33,7 +33,7 @@ import com.lowagie.text.pdf.PdfWriter;
 public class PdfService {
     private Logger logger = LoggerFactory.getLogger(PdfService.class);
 
-    public ByteArrayInputStream createPdf() {
+    public ByteArrayInputStream createPdf(Boolean merge) {
         logger.info("Create PDF Started : ");
         String title = "TechArchitect by Paras Bagga";
         String content = "We provide Web Development Services";
@@ -52,23 +52,41 @@ public class PdfService {
             Paragraph titlePara = new Paragraph(title, titleFont);
             document.add(titlePara);
 
+
+            String para_content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pretium, purus ut interdum interdum, magna augue dignissim elit, vitae tempus ipsum metus porta nisl. Proin vitae odio ac felis mollis vestibulum vitae at nisi. Donec a condimentum lectus. Pellentesque neque libero, molestie eget nulla ut, pharetra accumsan magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In consequat efficitur purus, sed fringilla ligula pretium vitae. Cras molestie pharetra nisl ut imperdiet. Vivamus feugiat, felis ut ornare ullamcorper, nulla augue ornare nunc, quis cursus risus dui a tellus. Fusce efficitur tincidunt purus, at varius dui semper bibendum. Vestibulum eleifend ligula vitae finibus dignissim. Nunc leo enim, imperdiet non imperdiet at, suscipit accumsan mi. Donec quis consectetur odio. Suspendisse rutrum leo id dui fermentum elementum. Quisque sit amet scelerisque magna. Etiam sed tortor nec neque pulvinar consequat.\r\n" + //
+                                "\r\n" + //
+                                "Sed ullamcorper, elit vitae commodo finibus, leo orci facilisis magna, vitae pulvinar augue leo nec mi. Sed vulputate sed ipsum ac rhoncus. Curabitur aliquet lacus ante, ut bibendum ipsum convallis sed. Vestibulum vestibulum ornare tempor. Aenean at luctus libero. Vivamus sed diam purus. Aliquam iaculis ligula non semper efficitur. Donec blandit, nisl vitae tincidunt feugiat, nulla orci semper ligula, vel tincidunt ipsum risus non nisi. Morbi lacinia ipsum eu lectus volutpat scelerisque. Curabitur viverra tincidunt sem, at gravida nisl lobortis quis. Nam consequat mi sed dui aliquet scelerisque. Nam id velit ultrices, feugiat risus sed, pharetra diam. Curabitur arcu justo, aliquam eu urna a, gravida hendrerit nisl. Etiam scelerisque mauris id mollis accumsan. Praesent faucibus porttitor tempor. Vivamus molestie aliquet enim.\r\n" + //
+                                "\r\n" + //
+                                "Aliquam erat volutpat. Curabitur congue molestie posuere. Curabitur quis libero pretium, euismod libero ac, posuere orci. Suspendisse potenti. Vivamus ac turpis commodo, ornare odio a, semper nibh. Sed nisl augue, vulputate eu metus in, ullamcorper hendrerit ipsum. Suspendisse potenti. Aliquam et dapibus nisi. Nulla aliquam non lectus id vulputate. Curabitur efficitur lacus justo, id semper libero venenatis ac. Nullam faucibus eget nunc at pharetra. Suspendisse eros ex, convallis id velit nec, consectetur varius nunc. Nunc vel nunc lectus. Suspendisse massa dolor, fermentum vitae erat a, placerat sodales lectus. Nullam rutrum nunc eget risus volutpat fermentum.\r\n" + //
+                                "\r\n" + //
+                                "Vestibulum eu felis diam. Nam sed condimentum mi, et ultricies dui. Quisque eget accumsan lectus, sit amet sollicitudin ipsum. Aenean quis nisi sollicitudin, dapibus neque sit amet, tempor magna. Suspendisse potenti. Fusce lacinia massa justo, quis dignissim leo finibus et. Proin venenatis hendrerit neque, posuere consectetur diam tempus eget. Aliquam feugiat arcu tortor, eget vestibulum sem aliquet quis. Morbi ac justo sollicitudin, pulvinar massa sit amet, rhoncus nisl. Nullam tincidunt urna scelerisque placerat auctor. Donec magna mi, maximus eget tellus nec, venenatis aliquam sem. Proin vestibulum dui ac fermentum consequat. Etiam est massa, porta vel felis non, elementum mollis urna. Nullam lacinia sem in convallis sagittis.\r\n" + //
+                                "\r\n" + //
+                                "Vivamus in ornare erat. Duis imperdiet justo vitae neque elementum semper. Sed elementum, urna nec tristique aliquam, arcu mauris sollicitudin tellus, quis pharetra ligula est vel nisl. Mauris volutpat tempor ex sit amet egestas. Aenean bibendum, tellus non gravida pretium, mauris purus laoreet.";
+
             Font paraFont = FontFactory.getFont(FontFactory.HELVETICA, 18);
             Paragraph paragraph = new Paragraph(content, paraFont);
-            paragraph.add(" This text is added while creating PDF.");
+            paragraph.add(para_content);
             document.add(paragraph);
 
-            // Add new page before importing content from existing PDF
-            document.newPage();
 
-            // Importing an existing PDF page
-            File file = new File("src/main/resources/pdf/existing.pdf"); // Update the path accordingly
-            PdfReader reader = new PdfReader(new FileInputStream(file));
-            PdfContentByte contentByte = writer.getDirectContent();
-            PdfImportedPage page = writer.getImportedPage(reader, 1); 
-            contentByte.addTemplate(page, 0, 0);
 
-            reader.close();
-        } catch (DocumentException | IOException ex) {
+             if (merge) {
+                // Add new page before importing content from existing PDF
+                document.newPage();
+
+                // Get the manipulated PDF page
+                ByteArrayInputStream mergedPdfStream = manipulate_pdf(PageSize.A4,false);
+                PdfReader reader = new PdfReader(mergedPdfStream);
+                
+                PdfContentByte contentByte = writer.getDirectContent();
+                PdfImportedPage page = writer.getImportedPage(reader, 1);
+
+                contentByte.addTemplate(page, 0, 0);
+
+                reader.close();
+            }
+
+        } catch (DocumentException | IOException  ex) {
             logger.error("Error occurred: {}", ex.getMessage());
         } finally {
             if (document.isOpen()) {
@@ -79,62 +97,52 @@ public class PdfService {
         return new ByteArrayInputStream(out.toByteArray());
     }
 
+
+
     class Watermark extends PdfPageEventHelper {
 
         @Override
-        public void onEndPage(PdfWriter writer, Document document) {
-            PdfContentByte canvas = writer.getDirectContentUnder();
-    
-            // Dynamically calculate the font size based on page size
-            float fontSize = calculateFontSize(document.getPageSize());
-    
-            // Define the font for the watermark with dynamic size
-            Font watermarkFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, fontSize, Font.ITALIC, new Color(200, 200, 200));
-            Phrase watermark = new Phrase("Test document", watermarkFont);
-    
-            // Set opacity for the watermark
-            PdfGState gState = new PdfGState();
-            gState.setFillOpacity(0.3f);
-    
-            // Calculate center position for watermark
-            float x = (document.right() + document.left()) / 2;
-            float y = (document.top() + document.bottom()) / 2;
-    
-            // Rotate the watermark diagonally
-            canvas.saveState();
-            canvas.setGState(gState);
-            canvas.beginText();
-            canvas.setFontAndSize(watermarkFont.getBaseFont(), fontSize);
-            canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, watermark.getContent(), x, y, 45);
-            canvas.endText();
-            canvas.restoreState();
-        }
-    
-        @Override
         public void onStartPage(PdfWriter writer, Document document) {
             PdfContentByte canvas = writer.getDirectContent();
-    
+        
             // Dynamically calculate the font size based on page size
             float fontSize = calculateFontSize(document.getPageSize());
-    
-            // Define the fonts for the header and footer with dynamic size
+        
+            // Define the fonts for the header, footer, and margin text
             Phrase header = new Phrase("TechArchitect - Header", FontFactory.getFont(FontFactory.HELVETICA_BOLD, fontSize));
             Phrase footer = new Phrase("TechArchitects", FontFactory.getFont(FontFactory.HELVETICA, fontSize));
-    
-            // Calculate the top and bottom positions dynamically based on the page size
-            float headerY = document.top() - (fontSize+1); // A bit above the top margin
+            Phrase leftMarginText = new Phrase("Left Margin Text", FontFactory.getFont(FontFactory.HELVETICA, fontSize));
+            Phrase rightMarginText = new Phrase("Right Margin Text", FontFactory.getFont(FontFactory.HELVETICA, fontSize));
+        
+            // Calculate the top, bottom, and margin positions dynamically based on the page size
+            float headerY = document.top() - (fontSize + 1); // A bit above the top margin
             float footerY = document.bottom(); // A bit below the bottom margin
-    
+            float marginLeft = document.left()-fontSize; // Position left text outside the content area
+            float marginRight = document.right()+fontSize; // Position right text outside the content area
+            float verticalCenter = (document.top() + document.bottom()) / 2; // Vertical center of the page
+        
             // Add header aligned to the left
             canvas.beginText();
             canvas.setFontAndSize(header.getFont().getBaseFont(), fontSize);
             canvas.showTextAligned(PdfContentByte.ALIGN_LEFT, header.getContent(), document.left(), headerY, 0);
             canvas.endText();
-    
+        
             // Add footer aligned to the right
             canvas.beginText();
             canvas.setFontAndSize(footer.getFont().getBaseFont(), fontSize);
             canvas.showTextAligned(PdfContentByte.ALIGN_RIGHT, footer.getContent(), document.right(), footerY, 0);
+            canvas.endText();
+        
+            // Add left margin text aligned to the center of the page
+            canvas.beginText();
+            canvas.setFontAndSize(leftMarginText.getFont().getBaseFont(), fontSize);
+            canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, leftMarginText.getContent(), marginLeft, verticalCenter, 90); // 90-degree rotation for vertical alignment
+            canvas.endText();
+        
+            // Add right margin text aligned to the center of the page
+            canvas.beginText();
+            canvas.setFontAndSize(rightMarginText.getFont().getBaseFont(), fontSize);
+            canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, rightMarginText.getContent(), marginRight, verticalCenter, -90); // -90-degree rotation for vertical alignment
             canvas.endText();
         }
     
@@ -144,7 +152,6 @@ public class PdfService {
             float diagonal = (float) Math.sqrt(Math.pow(pageSize.getWidth(), 2) + Math.pow(pageSize.getHeight(), 2));
     
             // Map the diagonal length to a font size between 12 and 26
-            // Assuming A6 to A1 ranges approximately from 300 to 2400 diagonal size
             float minDiagonal = 300;  // Approximate diagonal for A6
             float maxDiagonal = 2400; // Approximate diagonal for A1
     
@@ -161,8 +168,9 @@ public class PdfService {
     }
     
     
+    
 
-    public ByteArrayInputStream manipulate_pdf(Rectangle targetPageSize) {
+    public ByteArrayInputStream manipulate_pdf(Rectangle targetPageSize,Boolean header) {
         logger.info("Create PDF Started ");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
     
@@ -179,8 +187,12 @@ public class PdfService {
     
         try {
             PdfWriter writer = PdfWriter.getInstance(document, out);
-            Watermark event = new Watermark();
-            writer.setPageEvent(event);
+
+            if (header) {
+                Watermark event = new Watermark();
+                writer.setPageEvent(event);
+                
+            }
     
             document.open();
     
