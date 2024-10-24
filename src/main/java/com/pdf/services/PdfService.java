@@ -257,6 +257,61 @@ public class PdfService {
         // Return equal margins for left, right, top, bottom
         return new float[] { margin, margin, margin, margin };
     }
+
+    public ByteArrayInputStream add_margin(Integer left_margin) {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4, 0, 0, 0, 0);
+    
+        PdfWriter writer = PdfWriter.getInstance(document, out);
+    
+        document.open();
+    
+        // Importing an existing PDF page
+        File file = new File("src/main/resources/pdf/existing.pdf");
+        PdfReader reader;
+        try {
+            // Ensure left_margin is not negative
+            if (left_margin < 0) left_margin = 0;
+    
+            // Define the range for left margin and corresponding scale factor
+            Float scalefactor;
+            int maxMargin = 200; // Maximum margin threshold
+    
+            // Cap the left_margin if it's beyond the threshold
+            if (left_margin > maxMargin) {
+                left_margin = maxMargin;
+            }
+    
+            // Scale factor decreases as left_margin increases, ranging from 1.0 to 0.5
+            scalefactor = 1.0f - ((float) left_margin / (float) maxMargin) * 0.5f;
+    
+            // Calculate the translation to keep the right margin constant
+            float originalWidth = PageSize.A4.getWidth();
+            float scaledWidth = originalWidth * scalefactor;
+    
+            // Translation is based on the difference between the scaled width and the original width
+            float translationX = originalWidth - scaledWidth;
+    
+            reader = new PdfReader(new FileInputStream(file));
+    
+            PdfContentByte contentByte = writer.getDirectContent();
+            PdfImportedPage page = writer.getImportedPage(reader, 1);
+            
+            // Add template with scaling and translation
+            contentByte.addTemplate(page, scalefactor, 0, 0, 1, translationX, 1);
+    
+            reader.close();
+    
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        document.close();
+    
+        return new ByteArrayInputStream(out.toByteArray());
+    }
     
     
 }
