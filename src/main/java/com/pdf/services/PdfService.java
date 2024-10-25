@@ -264,6 +264,7 @@ public class PdfService {
         Document document = new Document(PageSize.A4, 0, 0, 0, 0);
     
         PdfWriter writer = PdfWriter.getInstance(document, out);
+        float translationX =0.0f;
     
         document.open();
     
@@ -298,7 +299,10 @@ public class PdfService {
             float scaledWidth = originalWidth * scalefactor;
     
             // Translation is based on the difference between the scaled width and the original width
-            float translationX = originalWidth - scaledWidth-right_margin;
+            if (left_margin!=0) {
+                translationX = originalWidth - scaledWidth-right_margin;
+                
+            }
     
             reader = new PdfReader(new FileInputStream(file));
     
