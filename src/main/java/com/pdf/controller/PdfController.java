@@ -80,9 +80,10 @@ public class PdfController {
     }
 
     @PostMapping("api/v0/add_margin")
-    public ResponseEntity<InputStreamResource> add_margin_pdf(@RequestParam Integer left_margin,@RequestParam Integer right_margin ) {
+    public ResponseEntity<InputStreamResource> add_margin_pdf(@RequestParam Float left_margin,@RequestParam Float right_margin,
+    @RequestParam Float top_margin, @RequestParam Float bottom_margin  ) {
 
-       ByteArrayInputStream pdf = pdfService.add_margin( left_margin,right_margin);
+       ByteArrayInputStream pdf = pdfService.add_margin( left_margin,right_margin, top_margin, bottom_margin);
        HttpHeaders httpHeaders = new HttpHeaders();
        httpHeaders.add("Content-Disposition", "inline; filename=test.pdf");
        return ResponseEntity

@@ -258,13 +258,20 @@ public class PdfService {
         return new float[] { margin, margin, margin, margin };
     }
 
-    public ByteArrayInputStream add_margin(Integer left_margin, Integer right_margin) {
+    public ByteArrayInputStream add_margin(Float left_margin, Float right_margin, Float top_margin, Float bottom_margin) {
+
+        left_margin *=72;
+        right_margin*=72;
+        top_margin*=72;
+        bottom_margin*=72;
+
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 0, 0, 0, 0);
     
         PdfWriter writer = PdfWriter.getInstance(document, out);
-        float translationX =0.0f;
+        float translationX = 0.0f;
+        float translationY = 0.0f;
     
         document.open();
     
@@ -272,45 +279,55 @@ public class PdfService {
         File file = new File("src/main/resources/pdf/existing.pdf");
         PdfReader reader;
         try {
-            // Ensure left_margin is not negative
-            if (left_margin < 0) left_margin = 0;
-            if (right_margin < 0) right_margin = 0;
-
+            // Ensure all margins are non-negative
+            if (left_margin < 0) left_margin = 0.0f;
+            if (right_margin < 0) right_margin = 0.0f;
+            if (top_margin < 0) top_margin = 0.0f;
+            if (bottom_margin < 0) bottom_margin = 0.0f;
     
-            // Define the range for left margin and corresponding scale factor
-            Float scalefactor;
-            int maxMargin = 200; // Maximum margin threshold
+            // Define maximum margin for scaling calculation
+            Float maxMargin = 200.0f;
     
-            // Cap the left_margin if it's beyond the threshold
-            if (left_margin > maxMargin) {
-                left_margin = maxMargin;
-            }else if (right_margin>maxMargin) {
-                right_margin = maxMargin;
-            }
+            // Cap each margin to the maximum threshold
+            if (left_margin > maxMargin) left_margin = maxMargin;
+            if (right_margin > maxMargin) right_margin = maxMargin;
+            if (top_margin > maxMargin) top_margin = maxMargin;
+            if (bottom_margin > maxMargin) bottom_margin = maxMargin;
     
-            // Scale factor decreases as left_margin increases, ranging from 1.0 to 0.5
-            scalefactor = 1.0f - ((float) (left_margin+right_margin) / (float) maxMargin) * 0.5f;
-            if (right_margin!=0) {
-                right_margin+=30;
-            }
+            // Calculate horizontal (X-axis) and vertical (Y-axis) scaling factors
+            float scalefactor = 1.0f - ((float) (left_margin + right_margin) / (float) maxMargin) * 0.5f;
+            float scaleY = 1.0f - ((float) (top_margin + bottom_margin) / (float) maxMargin) * 0.3f;
     
-            // Calculate the translation to keep the right margin constant
+            // Adjust right and bottom margins to add extra space if needed
+            if (right_margin != 0) right_margin += 30;
+            if (bottom_margin != 0) bottom_margin += 100;
+    
+            // Calculate translation for horizontal positioning (X-axis)
             float originalWidth = PageSize.A4.getWidth();
             float scaledWidth = originalWidth * scalefactor;
-    
-            // Translation is based on the difference between the scaled width and the original width
-            if (left_margin!=0) {
-                translationX = originalWidth - scaledWidth-right_margin;
-                
+            if (left_margin != 0) {
+                translationX = originalWidth - scaledWidth - right_margin;
             }
+    
+            // Calculate translation for vertical positioning (Y-axis)
+            float originalHeight = PageSize.A4.getHeight();
+            float scaledHeight = originalHeight * scaleY;
+    
+            // Set translationY based on independent top and bottom adjustments
+            if (bottom_margin!=0) {
+                translationY = bottom_margin - (originalHeight - scaledHeight - top_margin);  
+            }
+            // if (bottom_margin<30) {
+            //     translationY-;
+            // }
     
             reader = new PdfReader(new FileInputStream(file));
     
             PdfContentByte contentByte = writer.getDirectContent();
             PdfImportedPage page = writer.getImportedPage(reader, 1);
-            
-            // Add template with scaling and translation
-            contentByte.addTemplate(page, scalefactor, 0, 0, 1, translationX, 1);
+    
+            // Add template with both horizontal and vertical scaling and translations
+            contentByte.addTemplate(page, scalefactor, 0, 0, scaleY, translationX, translationY);
     
             reader.close();
     
@@ -323,6 +340,7 @@ public class PdfService {
     
         return new ByteArrayInputStream(out.toByteArray());
     }
+    
     
     
 }
