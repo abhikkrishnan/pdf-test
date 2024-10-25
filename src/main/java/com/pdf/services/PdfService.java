@@ -289,13 +289,16 @@ public class PdfService {
     
             // Scale factor decreases as left_margin increases, ranging from 1.0 to 0.5
             scalefactor = 1.0f - ((float) (left_margin+right_margin) / (float) maxMargin) * 0.5f;
+            if (right_margin!=0) {
+                right_margin+=30;
+            }
     
             // Calculate the translation to keep the right margin constant
             float originalWidth = PageSize.A4.getWidth();
             float scaledWidth = originalWidth * scalefactor;
     
             // Translation is based on the difference between the scaled width and the original width
-            float translationX = originalWidth - scaledWidth-(right_margin+25);
+            float translationX = originalWidth - scaledWidth-right_margin;
     
             reader = new PdfReader(new FileInputStream(file));
     
