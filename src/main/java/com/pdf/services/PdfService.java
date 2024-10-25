@@ -258,7 +258,7 @@ public class PdfService {
         return new float[] { margin, margin, margin, margin };
     }
 
-    public ByteArrayInputStream add_margin(Integer left_margin) {
+    public ByteArrayInputStream add_margin(Integer left_margin, Integer right_margin) {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 0, 0, 0, 0);
@@ -273,6 +273,8 @@ public class PdfService {
         try {
             // Ensure left_margin is not negative
             if (left_margin < 0) left_margin = 0;
+            if (right_margin < 0) right_margin = 0;
+
     
             // Define the range for left margin and corresponding scale factor
             Float scalefactor;
@@ -281,17 +283,19 @@ public class PdfService {
             // Cap the left_margin if it's beyond the threshold
             if (left_margin > maxMargin) {
                 left_margin = maxMargin;
+            }else if (right_margin>maxMargin) {
+                right_margin = maxMargin;
             }
     
             // Scale factor decreases as left_margin increases, ranging from 1.0 to 0.5
-            scalefactor = 1.0f - ((float) left_margin / (float) maxMargin) * 0.5f;
+            scalefactor = 1.0f - ((float) (left_margin+right_margin) / (float) maxMargin) * 0.5f;
     
             // Calculate the translation to keep the right margin constant
             float originalWidth = PageSize.A4.getWidth();
             float scaledWidth = originalWidth * scalefactor;
     
             // Translation is based on the difference between the scaled width and the original width
-            float translationX = originalWidth - scaledWidth;
+            float translationX = originalWidth - scaledWidth-(right_margin+25);
     
             reader = new PdfReader(new FileInputStream(file));
     
