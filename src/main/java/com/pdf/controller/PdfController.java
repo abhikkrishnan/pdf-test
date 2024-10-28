@@ -93,5 +93,21 @@ public class PdfController {
                .body(new InputStreamResource(pdf));
    }
 
+   @PostMapping("api/v0/add_text_margin")
+   public ResponseEntity<InputStreamResource> add_text_margin_pdf(@RequestParam String margin_position, @RequestParam String alignment
+   ,@RequestParam String text  ) {
+
+
+      ByteArrayInputStream pdf = pdfService.addTextToMargin(margin_position, alignment, text);
+
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.add("Content-Disposition", "inline; filename=test1.pdf");
+      return ResponseEntity
+              .ok()
+              .headers(httpHeaders)
+              .contentType(MediaType.APPLICATION_PDF)
+              .body(new InputStreamResource(pdf));
+  }
+
 
 }

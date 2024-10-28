@@ -1,5 +1,6 @@
 package com.pdf.services;
 
+import java.lang.Float;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+// import com.itextpdf.awt.geom.CubicCurve2D.Float;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
@@ -258,7 +260,7 @@ public class PdfService {
         return new float[] { margin, margin, margin, margin };
     }
 
-    public ByteArrayInputStream add_margin(Float left_margin, Float right_margin, Float top_margin, Float bottom_margin) {
+    public ByteArrayInputStream add_margin(float left_margin, float right_margin, float top_margin, float bottom_margin) {
 
         left_margin *=72;
         right_margin*=72;
@@ -268,6 +270,8 @@ public class PdfService {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 0, 0, 0, 0);
+
+
     
         PdfWriter writer = PdfWriter.getInstance(document, out);
         float translationX = 0.0f;
@@ -317,10 +321,10 @@ public class PdfService {
             if (bottom_margin!=0) {
                 translationY = bottom_margin - (originalHeight - scaledHeight - top_margin);  
             }
-            // if (bottom_margin<30) {
-            //     translationY-;
-            // }
-    
+
+            if (top_margin==0 && bottom_margin!=0) {
+                translationY=translationY-35;
+            }
             reader = new PdfReader(new FileInputStream(file));
     
             PdfContentByte contentByte = writer.getDirectContent();
@@ -340,6 +344,148 @@ public class PdfService {
     
         return new ByteArrayInputStream(out.toByteArray());
     }
+
+        // New method to add text at specified margin positions
+        public ByteArrayInputStream addTextToMargin(String marginPosition, String alignment, String text) {
+            logger.info("Adding text to margin: Position - {}, Alignment - {}, Text - {}", marginPosition, alignment, text);
+
+            ByteArrayInputStream pdfWithMargins;
+
+
+
+
+            
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            
+            try {
+                // pdf with margin 
+                if (marginPosition.equalsIgnoreCase("left")) {
+                    System.out.println(marginPosition.toLowerCase());
+                    pdfWithMargins = add_margin(0.5f, 0f, 0f, 0f);
+                } else if (marginPosition.equalsIgnoreCase("right")) {
+                    pdfWithMargins = add_margin(0f, 0.5f, 0f, 0f);
+                } else if (marginPosition.equalsIgnoreCase("top")) {
+                    pdfWithMargins = add_margin(0f, 0f, 0.5f, 0f);
+                } else if (marginPosition.equalsIgnoreCase("bottom")) {
+                    pdfWithMargins = add_margin(0f, 0f, 0f, 0.5f);
+                } else {
+                    pdfWithMargins = add_margin(0f, 0f, 0f, 0f);
+                }
+                
+
+                
+                // Then, apply watermark to place text at the specified margin position
+                PdfReader reader = new PdfReader(pdfWithMargins);
+                Document document = new Document(reader.getPageSize(1));
+                PdfWriter writer = PdfWriter.getInstance(document, out);
+                document.open();
+                
+                // Set custom watermark event to add text in margin
+                CustomWatermark watermark = new CustomWatermark(marginPosition, alignment, text);
+                writer.setPageEvent(watermark);
+    
+                // Import the existing PDF content
+                PdfContentByte contentByte = writer.getDirectContent();
+                PdfImportedPage page = writer.getImportedPage(reader, 1);
+                contentByte.addTemplate(page, 0, 0);
+    
+                document.close();
+                reader.close();
+                
+            } catch (DocumentException | IOException e) {
+                logger.error("Error occurred while adding text to margin: {}", e.getMessage());
+            }
+            
+            return new ByteArrayInputStream(out.toByteArray());
+        }
+
+        class CustomWatermark extends PdfPageEventHelper {
+            private String marginPosition;
+            private String alignment;
+            private String text;
+            private float xPos = 0;
+            private float yPos = 0;
+    
+            public CustomWatermark(String marginPosition, String alignment, String text) {
+                this.marginPosition = marginPosition;
+                this.alignment = alignment;
+                this.text = text;
+            }
+    
+
+            public void onEndPage(PdfWriter writer, Document document) {
+                Font font = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, Color.BLACK);
+            
+                switch (marginPosition.toLowerCase()) {
+                    case "left":
+                        xPos = document.left() - 20; // Adjust xPos to provide extra space
+                        yPos = getYPosBasedOnAlignment(alignment, document);
+                        break;
+                    case "right":
+                        xPos = document.right() + 20; // Adjust xPos to provide extra space
+                        yPos = getYPosBasedOnAlignment(alignment, document);
+                        break;
+                    case "top":
+                        xPos = getXPosBasedOnAlignment(alignment, document);
+                        yPos = document.top() ; // Adjust yPos to avoid cutoff
+                        break;
+                    case "bottom":
+                        xPos = getXPosBasedOnAlignment(alignment, document);
+                        yPos = document.bottom() ; // Adjust yPos to avoid cutoff
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid margin position: " + marginPosition);
+                }
+            
+                PdfContentByte canvas = writer.getDirectContent();
+                canvas.beginText();
+                canvas.setFontAndSize(font.getBaseFont(), font.getSize());
+                canvas.setColorFill(Color.BLACK); // Ensure color contrast for visibility
+            
+                float rotationAngle = marginPosition.equals("left") ? 90 : (marginPosition.equals("right") ? -90 : 0);
+                
+                // Set scaling down the font size if text length is too long
+                float textWidth = font.getBaseFont().getWidthPoint(text, font.getSize());
+                if (textWidth > document.right() - document.left()) {
+                    font.setSize(font.getSize() * (document.right() - document.left()) / textWidth);
+                }
+                
+                // Display the text with the new adjusted position and rotation
+                canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, text, xPos, yPos, rotationAngle);
+            
+                canvas.endText();
+            }
+            
+            
+    
+            // Helper method to determine Y position based on alignment for left/right margin
+            private float getYPosBasedOnAlignment(String alignment, Document document) {
+                switch (alignment.toLowerCase()) {
+                    case "top":
+                        return document.top();
+                    case "center":
+                        return (document.top() + document.bottom()) / 2;
+                    case "bottom":
+                        return document.bottom();
+                    default:
+                        throw new IllegalArgumentException("Invalid alignment for left/right margin: " + alignment);
+                }
+            }
+    
+            // Helper method to determine X position based on alignment for top/bottom margin
+            private float getXPosBasedOnAlignment(String alignment, Document document) {
+                switch (alignment.toLowerCase()) {
+                    case "left":
+                        return document.left();
+                    case "center":
+                        return (document.left() + document.right()) / 2;
+                    case "right":
+                        return document.right();
+                    default:
+                        throw new IllegalArgumentException("Invalid alignment for top/bottom margin: " + alignment);
+                }
+            }
+        }
     
     
     
