@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 // import com.itextpdf.awt.geom.CubicCurve2D.Float;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -351,13 +352,13 @@ public class PdfService {
             try {
                 // pdf with margin 
                 if (marginPosition.equalsIgnoreCase("left")) {
-                    pdfWithMargins = add_margin(0.5f, 0f, 0f, 0f);
+                    pdfWithMargins = add_margin(0.3f, 0f, 0f, 0f);
                 } else if (marginPosition.equalsIgnoreCase("right")) {
-                    pdfWithMargins = add_margin(0f, 0.5f, 0f, 0f);
+                    pdfWithMargins = add_margin(0f, 0.3f, 0f, 0f);
                 } else if (marginPosition.equalsIgnoreCase("top")) {
-                    pdfWithMargins = add_margin(0f, 0f, 0.5f, 0f);
+                    pdfWithMargins = add_margin(0f, 0f, 0.3f, 0f);
                 } else if (marginPosition.equalsIgnoreCase("bottom")) {
-                    pdfWithMargins = add_margin(0f, 0f, 0f, 0.5f);
+                    pdfWithMargins = add_margin(0f, 0f, 0f, 0.3f);
                 } else {
                     pdfWithMargins = add_margin(0f, 0f, 0f, 0f);
                 }
@@ -482,12 +483,9 @@ public class PdfService {
                         yPos = document.top() - (image.getScaledHeight() / 2);
                     } else if (marginPosition.equalsIgnoreCase("bottom")) {
                         yPos = document.bottom() + (image.getScaledHeight() / 2);
+                        yPos=yPos-25;
                     }
             
-                    // Adjust xPos for "center" alignment if specified
-                    if (alignment.equalsIgnoreCase("center")) {
-                        xPos = (document.left() + document.right() - image.getScaledWidth()) / 2;
-                    }
             
                     // Set rotation if needed
                     float rotationAngle = marginPosition.equalsIgnoreCase("left") ? 90 : (marginPosition.equalsIgnoreCase("right") ? -90 : 0);
@@ -516,7 +514,7 @@ public class PdfService {
                         yPos = getYPosBasedOnAlignment(alignment, document);
                         break;
                     case "right":
-                        xPos = document.right() + 20;
+                        xPos = isImage? document.right() :document.right() + 20;
                         yPos = getYPosBasedOnAlignment(alignment, document);
                         break;
                     case "top":
@@ -536,10 +534,16 @@ public class PdfService {
             private float getYPosBasedOnAlignment(String alignment, Document document) {
                 switch (alignment.toLowerCase()) {
                     case "top":
+                        if (isImage) {
+                            return document.top();
+                        }
                         return document.top()-(text.length()*2);
                     case "center":
                         return (document.top() + document.bottom()) / 2;
                     case "bottom":
+                        if (isImage) {
+                            return document.bottom();
+                        }
                         return document.bottom()+(text.length()*2);
                     default:
                         throw new IllegalArgumentException("Invalid alignment for left/right margin: " + alignment);
@@ -550,10 +554,16 @@ public class PdfService {
             private float getXPosBasedOnAlignment(String alignment, Document document) {
                 switch (alignment.toLowerCase()) {
                     case "left":
+                        if (isImage) {
+                            return document.left();
+                        }
                         return document.left()+(text.length()*2);
                     case "center":
                         return (document.left() + document.right()) / 2;
                     case "right":
+                        if (isImage) {
+                            return document.right();
+                        }
                         return document.right()-(text.length()*2);
                     default:
                         throw new IllegalArgumentException("Invalid alignment for top/bottom margin: " + alignment);
