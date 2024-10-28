@@ -341,7 +341,7 @@ public class PdfService {
 
         // New method to add text at specified margin positions
         public ByteArrayInputStream addTextToMargin(String marginPosition, String alignment, String text, Boolean image) {
-            logger.info("Adding text to margin: Position - {}, Alignment - {}, Text - {}, Isimage-{}", marginPosition, alignment, text,image);
+            // logger.info("Adding text to margin: Position - {}, Alignment - {}, Text - {}, Isimage-{}", marginPosition, alignment, text,image);
 
             ByteArrayInputStream pdfWithMargins;
 
@@ -536,11 +536,11 @@ public class PdfService {
             private float getYPosBasedOnAlignment(String alignment, Document document) {
                 switch (alignment.toLowerCase()) {
                     case "top":
-                        return document.top();
+                        return document.top()-(text.length()*2);
                     case "center":
                         return (document.top() + document.bottom()) / 2;
                     case "bottom":
-                        return document.bottom();
+                        return document.bottom()+(text.length()*2);
                     default:
                         throw new IllegalArgumentException("Invalid alignment for left/right margin: " + alignment);
                 }
@@ -550,11 +550,11 @@ public class PdfService {
             private float getXPosBasedOnAlignment(String alignment, Document document) {
                 switch (alignment.toLowerCase()) {
                     case "left":
-                        return document.left();
+                        return document.left()+(text.length()*2);
                     case "center":
                         return (document.left() + document.right()) / 2;
                     case "right":
-                        return document.right();
+                        return document.right()-(text.length()*2);
                     default:
                         throw new IllegalArgumentException("Invalid alignment for top/bottom margin: " + alignment);
                 }
