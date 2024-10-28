@@ -318,7 +318,7 @@ public class PdfService {
             }
 
             if (top_margin==0 && bottom_margin!=0) {
-                translationY=translationY-35;
+                translationY=translationY-55;
             }
             reader = new PdfReader(new FileInputStream(file));
     
@@ -480,12 +480,14 @@ public class PdfService {
             
                     // Adjust yPos for "top" and "bottom" to ensure it fits within bounds
                     if (marginPosition.equalsIgnoreCase("top")) {
-                        yPos = document.top() - (image.getScaledHeight() / 2);
+                        yPos = document.top() - (image.getScaledHeight() / 4);
                     } else if (marginPosition.equalsIgnoreCase("bottom")) {
                         yPos = document.bottom() + (image.getScaledHeight() / 2);
-                        yPos=yPos-25;
+                        yPos=yPos-45;
                     }
-            
+                    if (marginPosition.equalsIgnoreCase("left")) {
+                        xPos-=10;
+                    }
             
                     // Set rotation if needed
                     float rotationAngle = marginPosition.equalsIgnoreCase("left") ? 90 : (marginPosition.equalsIgnoreCase("right") ? -90 : 0);
