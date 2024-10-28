@@ -290,9 +290,7 @@ public class PdfService {
             if (top_margin > maxMargin) top_margin = maxMargin;
             if (bottom_margin > maxMargin) bottom_margin = maxMargin;
 
-            if (!Image) {
-                event.addContent(writer.getDirectContent(), document, "Left Centered Text", "top", "right", "text", 12);                
-            }
+
     
             // Calculate horizontal (X-axis) and vertical (Y-axis) scaling factors
             float scalefactor = 1.0f - ((float) (left_margin + right_margin) / (float) maxMargin) * 0.5f;
@@ -342,21 +340,17 @@ public class PdfService {
     }
 
         // New method to add text at specified margin positions
-        public ByteArrayInputStream addTextToMargin(String marginPosition, String alignment, String text) {
-            logger.info("Adding text to margin: Position - {}, Alignment - {}, Text - {}", marginPosition, alignment, text);
+        public ByteArrayInputStream addTextToMargin(String marginPosition, String alignment, String text, Boolean image) {
+            logger.info("Adding text to margin: Position - {}, Alignment - {}, Text - {}, Isimage-{}", marginPosition, alignment, text,image);
 
             ByteArrayInputStream pdfWithMargins;
 
 
-
-
-            
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             
             try {
                 // pdf with margin 
                 if (marginPosition.equalsIgnoreCase("left")) {
-                    System.out.println(marginPosition.toLowerCase());
                     pdfWithMargins = add_margin(0.5f, 0f, 0f, 0f);
                 } else if (marginPosition.equalsIgnoreCase("right")) {
                     pdfWithMargins = add_margin(0f, 0.5f, 0f, 0f);
@@ -376,9 +370,15 @@ public class PdfService {
                 PdfWriter writer = PdfWriter.getInstance(document, out);
                 document.open();
                 
+                if (image) {
+                    CustomWatermark watermark = new CustomWatermark(marginPosition, alignment,"C:\\Users\\user\\Downloads\\frame.png",true);
+                    writer.setPageEvent(watermark);
+                }else{
+                    CustomWatermark watermark = new CustomWatermark(marginPosition, alignment, text);
+                    writer.setPageEvent(watermark);
+                }
                 // Set custom watermark event to add text in margin
-                CustomWatermark watermark = new CustomWatermark(marginPosition, alignment, text);
-                writer.setPageEvent(watermark);
+
     
                 // Import the existing PDF content
                 PdfContentByte contentByte = writer.getDirectContent();
@@ -399,61 +399,139 @@ public class PdfService {
             private String marginPosition;
             private String alignment;
             private String text;
+            private String imagePath; // New field for image path
+            private boolean isImage; // Flag to check if watermark is image or text
             private float xPos = 0;
             private float yPos = 0;
-    
+        
+            // Constructor for text watermark
             public CustomWatermark(String marginPosition, String alignment, String text) {
                 this.marginPosition = marginPosition;
                 this.alignment = alignment;
                 this.text = text;
+                this.isImage = false; // This is a text watermark
             }
-    
+        
+            // Constructor for image watermark
+            public CustomWatermark(String marginPosition, String alignment, String imagePath, boolean isImage) {
+                this.marginPosition = marginPosition;
+                this.alignment = alignment;
+                this.imagePath = imagePath;
+                this.isImage = isImage; // This is an image watermark
 
+            }
+        
             public void onEndPage(PdfWriter writer, Document document) {
+                if (isImage) {
+                    addImageWatermark(writer, document);
+                } else {
+                    addTextWatermark(writer, document);
+                }
+            }
+        
+            // Method to add text watermark
+            private void addTextWatermark(PdfWriter writer, Document document) {
                 Font font = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, Color.BLACK);
+        
+                setPosition(document); // Set xPos and yPos based on marginPosition and alignment
+        
+                PdfContentByte canvas = writer.getDirectContent();
+                canvas.beginText();
+                canvas.setFontAndSize(font.getBaseFont(), font.getSize());
+                canvas.setColorFill(Color.BLACK); // Set text color
+                
+                float rotationAngle = marginPosition.equals("left") ? 90 : (marginPosition.equals("right") ? -90 : 0);
+                canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, text, xPos, yPos, rotationAngle);
+                
+                canvas.endText();
+            }
+        
+            // Method to add image watermark
+            private void addImageWatermark(PdfWriter writer, Document document) {
+                try {
+                    Image image = Image.getInstance(imagePath); // Load image from path
             
+                    setPosition(document); // Set xPos and yPos based on marginPosition and alignment
+            
+                    // Calculate the margin area dimensions
+                    float maxWidth, maxHeight;
+                    switch (marginPosition.toLowerCase()) {
+                        case "left":
+                        case "right":
+                            maxWidth = document.leftMargin();
+                            maxHeight = document.getPageSize().getHeight() - document.topMargin() - document.bottomMargin();
+                            break;
+                        case "top":
+                        case "bottom":
+                            maxWidth = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+                            maxHeight = document.topMargin();
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Invalid margin position: " + marginPosition);
+                    }
+            
+                    // Calculate scaling to fit the image within the margin area
+                    float widthScale = maxWidth / image.getWidth();
+                    float heightScale = maxHeight / image.getHeight();
+                    float scale = Math.min(widthScale, heightScale); // Use the smaller scale to fit
+            
+                    image.scaleAbsolute(image.getWidth() * scale, image.getHeight() * scale);
+            
+                    // Adjust yPos for "top" and "bottom" to ensure it fits within bounds
+                    if (marginPosition.equalsIgnoreCase("top")) {
+                        yPos = document.top() - (image.getScaledHeight() / 2);
+                    } else if (marginPosition.equalsIgnoreCase("bottom")) {
+                        yPos = document.bottom() + (image.getScaledHeight() / 2);
+                    }
+            
+                    // Adjust xPos for "center" alignment if specified
+                    if (alignment.equalsIgnoreCase("center")) {
+                        xPos = (document.left() + document.right() - image.getScaledWidth()) / 2;
+                    }
+            
+                    // Set rotation if needed
+                    float rotationAngle = marginPosition.equalsIgnoreCase("left") ? 90 : (marginPosition.equalsIgnoreCase("right") ? -90 : 0);
+                    image.setRotationDegrees(rotationAngle);
+            
+                    // Set final position and add the image to the PDF
+                    image.setAbsolutePosition(xPos, yPos);
+                    PdfContentByte canvas = writer.getDirectContent();
+                    canvas.addImage(image);
+            
+                    // Debugging confirmation
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            
+            
+        
+            // Helper method to determine position based on alignment and marginPosition
+            private void setPosition(Document document) {
                 switch (marginPosition.toLowerCase()) {
                     case "left":
-                        xPos = document.left() - 20; // Adjust xPos to provide extra space
+                        xPos = document.left() - 20;
                         yPos = getYPosBasedOnAlignment(alignment, document);
                         break;
                     case "right":
-                        xPos = document.right() + 20; // Adjust xPos to provide extra space
+                        xPos = document.right() + 20;
                         yPos = getYPosBasedOnAlignment(alignment, document);
                         break;
                     case "top":
                         xPos = getXPosBasedOnAlignment(alignment, document);
-                        yPos = document.top() ; // Adjust yPos to avoid cutoff
+                        yPos = document.top() + 20;
                         break;
                     case "bottom":
                         xPos = getXPosBasedOnAlignment(alignment, document);
-                        yPos = document.bottom() ; // Adjust yPos to avoid cutoff
+                        yPos = document.bottom() - 20;
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid margin position: " + marginPosition);
                 }
-            
-                PdfContentByte canvas = writer.getDirectContent();
-                canvas.beginText();
-                canvas.setFontAndSize(font.getBaseFont(), font.getSize());
-                canvas.setColorFill(Color.BLACK); // Ensure color contrast for visibility
-            
-                float rotationAngle = marginPosition.equals("left") ? 90 : (marginPosition.equals("right") ? -90 : 0);
-                
-                // Set scaling down the font size if text length is too long
-                float textWidth = font.getBaseFont().getWidthPoint(text, font.getSize());
-                if (textWidth > document.right() - document.left()) {
-                    font.setSize(font.getSize() * (document.right() - document.left()) / textWidth);
-                }
-                
-                // Display the text with the new adjusted position and rotation
-                canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, text, xPos, yPos, rotationAngle);
-            
-                canvas.endText();
             }
-            
-            
-    
+        
             // Helper method to determine Y position based on alignment for left/right margin
             private float getYPosBasedOnAlignment(String alignment, Document document) {
                 switch (alignment.toLowerCase()) {
@@ -467,7 +545,7 @@ public class PdfService {
                         throw new IllegalArgumentException("Invalid alignment for left/right margin: " + alignment);
                 }
             }
-    
+        
             // Helper method to determine X position based on alignment for top/bottom margin
             private float getXPosBasedOnAlignment(String alignment, Document document) {
                 switch (alignment.toLowerCase()) {
@@ -482,6 +560,7 @@ public class PdfService {
                 }
             }
         }
+        
     
     
     
