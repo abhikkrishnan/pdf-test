@@ -18,6 +18,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -103,71 +104,55 @@ public class PdfService {
 
     class Watermark extends PdfPageEventHelper {
 
-        @Override
-        public void onStartPage(PdfWriter writer, Document document) {
-            PdfContentByte canvas = writer.getDirectContent();
-        
-            // Dynamically calculate the font size based on page size
-            float fontSize = calculateFontSize(document.getPageSize());
-        
-            // Define the fonts for the header, footer, and margin text
-            Phrase header = new Phrase("TechArchitect - Header", FontFactory.getFont(FontFactory.HELVETICA_BOLD, fontSize));
-            Phrase footer = new Phrase("TechArchitects", FontFactory.getFont(FontFactory.HELVETICA, fontSize));
-            Phrase leftMarginText = new Phrase("Left Margin Text", FontFactory.getFont(FontFactory.HELVETICA, fontSize));
-            Phrase rightMarginText = new Phrase("Right Margin Text", FontFactory.getFont(FontFactory.HELVETICA, fontSize));
-        
-            // Calculate the top, bottom, and margin positions dynamically based on the page size
-            float headerY = document.top() - (fontSize + 1); // A bit above the top margin
-            float footerY = document.bottom(); // A bit below the bottom margin
-            float marginLeft = document.left()-fontSize; // Position left text outside the content area
-            float marginRight = document.right()+fontSize; // Position right text outside the content area
-            float verticalCenter = (document.top() + document.bottom()) / 2; // Vertical center of the page
-        
-            // Add header aligned to the left
-            canvas.beginText();
-            canvas.setFontAndSize(header.getFont().getBaseFont(), fontSize);
-            canvas.showTextAligned(PdfContentByte.ALIGN_LEFT, header.getContent(), document.left(), headerY, 0);
-            canvas.endText();
-        
-            // Add footer aligned to the right
-            canvas.beginText();
-            canvas.setFontAndSize(footer.getFont().getBaseFont(), fontSize);
-            canvas.showTextAligned(PdfContentByte.ALIGN_RIGHT, footer.getContent(), document.right(), footerY, 0);
-            canvas.endText();
-        
-            // Add left margin text aligned to the center of the page
-            canvas.beginText();
-            canvas.setFontAndSize(leftMarginText.getFont().getBaseFont(), fontSize);
-            canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, leftMarginText.getContent(), marginLeft, verticalCenter, 90); // 90-degree rotation for vertical alignment
-            canvas.endText();
-        
-            // Add right margin text aligned to the center of the page
-            canvas.beginText();
-            canvas.setFontAndSize(rightMarginText.getFont().getBaseFont(), fontSize);
-            canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, rightMarginText.getContent(), marginRight, verticalCenter, -90); // -90-degree rotation for vertical alignment
-            canvas.endText();
+    
+        private void addContent(PdfContentByte canvas, Document document, String content, String position, String alignment, String type, float fontSize) {
+            float x = 0, y = 0, rotation = 0;
+    
+            // Set coordinates based on position and alignment
+            switch (position) {
+                case "top": y = document.top() - fontSize - 5; break;
+                case "center": y = (document.top() + document.bottom()) / 2; break;
+                case "bottom": y = document.bottom() + 5; break;
+            }
+    
+            switch (alignment) {
+                case "left": x = document.left() + 40; rotation = position.equals("center") ? 90 : 0; break;
+                case "right": x = document.right() - 40; rotation = position.equals("center") ? -90 : 0; break;
+                case "center": x = (document.left() + document.right()) / 2; break;
+            }
+    
+            try {
+                if (type.equals("text")) {
+                    // Add text content
+                    Phrase phrase = new Phrase(content, FontFactory.getFont(FontFactory.HELVETICA, fontSize));
+                    canvas.beginText();
+                    canvas.setFontAndSize(phrase.getFont().getBaseFont(), fontSize);
+                    canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, phrase.getContent(), x, y, rotation);
+                    canvas.endText();
+                } else if (type.equals("image")) {
+                    // Add image content
+                    Image image = Image.getInstance(content);
+                    image.scaleToFit(fontSize * 2, fontSize * 2); // Adjust scaling as needed
+                    image.setAbsolutePosition(x, y);
+                    image.setRotationDegrees(rotation);
+                    canvas.addImage(image);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     
-        // Helper method to calculate font size based on the page size
         private float calculateFontSize(Rectangle pageSize) {
-            // Get diagonal size of the page (Pythagorean theorem for width and height)
             float diagonal = (float) Math.sqrt(Math.pow(pageSize.getWidth(), 2) + Math.pow(pageSize.getHeight(), 2));
-    
-            // Map the diagonal length to a font size between 12 and 26
-            float minDiagonal = 300;  // Approximate diagonal for A6
-            float maxDiagonal = 2400; // Approximate diagonal for A1
-    
-            // Scale the font size linearly between 12 and 26 based on diagonal
+            float minDiagonal = 300;
+            float maxDiagonal = 2400;
             float minFontSize = 9;
             float maxFontSize = 32;
-    
-            // Clamp the diagonal size between minDiagonal and maxDiagonal
             diagonal = Math.max(minDiagonal, Math.min(maxDiagonal, diagonal));
-    
-            // Linear interpolation to calculate the font size
             return minFontSize + (diagonal - minDiagonal) * (maxFontSize - minFontSize) / (maxDiagonal - minDiagonal);
         }
     }
+    
     
     
     
@@ -260,7 +245,7 @@ public class PdfService {
         return new float[] { margin, margin, margin, margin };
     }
 
-    public ByteArrayInputStream add_margin(float left_margin, float right_margin, float top_margin, float bottom_margin) {
+    public ByteArrayInputStream add_margin(Float left_margin, Float right_margin, Float top_margin, Float bottom_margin) {
 
         left_margin *=72;
         right_margin*=72;
@@ -276,8 +261,15 @@ public class PdfService {
         PdfWriter writer = PdfWriter.getInstance(document, out);
         float translationX = 0.0f;
         float translationY = 0.0f;
+
+
+        Watermark event = new Watermark();
+        writer.setPageEvent(event);
+
     
         document.open();
+
+
     
         // Importing an existing PDF page
         File file = new File("src/main/resources/pdf/existing.pdf");
@@ -297,6 +289,10 @@ public class PdfService {
             if (right_margin > maxMargin) right_margin = maxMargin;
             if (top_margin > maxMargin) top_margin = maxMargin;
             if (bottom_margin > maxMargin) bottom_margin = maxMargin;
+
+            if (!Image) {
+                event.addContent(writer.getDirectContent(), document, "Left Centered Text", "top", "right", "text", 12);                
+            }
     
             // Calculate horizontal (X-axis) and vertical (Y-axis) scaling factors
             float scalefactor = 1.0f - ((float) (left_margin + right_margin) / (float) maxMargin) * 0.5f;
