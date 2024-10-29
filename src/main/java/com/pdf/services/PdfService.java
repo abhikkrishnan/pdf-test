@@ -370,15 +370,16 @@ public class PdfService {
                 Document document = new Document(reader.getPageSize(1));
                 PdfWriter writer = PdfWriter.getInstance(document, out);
                 document.open();
+
+                CustomWatermark watermark = new CustomWatermark(marginPosition, alignment, text);
+                writer.setPageEvent(watermark);
+                // Set custom watermark event to add text in margin
                 
                 if (image) {
-                    CustomWatermark watermark = new CustomWatermark(marginPosition, alignment,"C:\\Users\\user\\Downloads\\frame.png",true);
-                    writer.setPageEvent(watermark);
-                }else{
-                    CustomWatermark watermark = new CustomWatermark(marginPosition, alignment, text);
-                    writer.setPageEvent(watermark);
+                    CustomWatermark watermark_1 = new CustomWatermark(marginPosition, alignment,"src/main/resources/images/tech.png",true);
+                    writer.setPageEvent(watermark_1);
                 }
-                // Set custom watermark event to add text in margin
+
 
     
                 // Import the existing PDF content
@@ -402,8 +403,10 @@ public class PdfService {
             private String text;
             private String imagePath; // New field for image path
             private boolean isImage; // Flag to check if watermark is image or text
-            private float xPos = 0;
-            private float yPos = 0;
+            private float xPosText = 0;
+            private float yPosText = 0;
+            private float xPosImage = 0;
+            private float yPosImage = 0;
         
             // Constructor for text watermark
             public CustomWatermark(String marginPosition, String alignment, String text) {
@@ -419,31 +422,29 @@ public class PdfService {
                 this.alignment = alignment;
                 this.imagePath = imagePath;
                 this.isImage = isImage; // This is an image watermark
-
             }
         
             public void onEndPage(PdfWriter writer, Document document) {
                 if (isImage) {
                     addImageWatermark(writer, document);
-                } else {
-                    addTextWatermark(writer, document);
                 }
+                addTextWatermark(writer, document); // Always add text watermark after checking for image
             }
         
             // Method to add text watermark
             private void addTextWatermark(PdfWriter writer, Document document) {
                 Font font = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, Color.BLACK);
         
-                setPosition(document); // Set xPos and yPos based on marginPosition and alignment
+                setPositionForText(document); // Set xPosText and yPosText for text watermark
         
                 PdfContentByte canvas = writer.getDirectContent();
                 canvas.beginText();
                 canvas.setFontAndSize(font.getBaseFont(), font.getSize());
                 canvas.setColorFill(Color.BLACK); // Set text color
-                
+        
                 float rotationAngle = marginPosition.equals("left") ? 90 : (marginPosition.equals("right") ? -90 : 0);
-                canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, text, xPos, yPos, rotationAngle);
-                
+                canvas.showTextAligned(PdfContentByte.ALIGN_CENTER, text, xPosText, yPosText, rotationAngle);
+        
                 canvas.endText();
             }
         
@@ -451,10 +452,9 @@ public class PdfService {
             private void addImageWatermark(PdfWriter writer, Document document) {
                 try {
                     Image image = Image.getInstance(imagePath); // Load image from path
-            
-                    setPosition(document); // Set xPos and yPos based on marginPosition and alignment
-            
-                    // Calculate the margin area dimensions
+        
+                    setPositionForImage(document); // Set xPosImage and yPosImage for image watermark
+        
                     float maxWidth, maxHeight;
                     switch (marginPosition.toLowerCase()) {
                         case "left":
@@ -470,108 +470,115 @@ public class PdfService {
                         default:
                             throw new IllegalArgumentException("Invalid margin position: " + marginPosition);
                     }
-            
-                    // Calculate scaling to fit the image within the margin area
+        
                     float widthScale = maxWidth / image.getWidth();
                     float heightScale = maxHeight / image.getHeight();
-                    float scale = Math.min(widthScale, heightScale); // Use the smaller scale to fit
-            
+                    float scale = Math.min(widthScale, heightScale);
+        
                     image.scaleAbsolute(image.getWidth() * scale, image.getHeight() * scale);
-            
-                    // Adjust yPos for "top" and "bottom" to ensure it fits within bounds
+        
                     if (marginPosition.equalsIgnoreCase("top")) {
-                        yPos = document.top() - (image.getScaledHeight() / 4);
+                        yPosImage = document.top() - (image.getScaledHeight() / 4);
                     } else if (marginPosition.equalsIgnoreCase("bottom")) {
-                        yPos = document.bottom() + (image.getScaledHeight() / 2);
-                        yPos=yPos-45;
+                        yPosImage = document.bottom() + (image.getScaledHeight() / 2) - 45;
                     }
                     if (marginPosition.equalsIgnoreCase("left")) {
-                        xPos-=10;
+                        xPosImage -= 10;
                     }
-            
-                    // Set rotation if needed
+        
                     float rotationAngle = marginPosition.equalsIgnoreCase("left") ? 90 : (marginPosition.equalsIgnoreCase("right") ? -90 : 0);
                     image.setRotationDegrees(rotationAngle);
-            
-                    // Set final position and add the image to the PDF
-                    image.setAbsolutePosition(xPos, yPos);
+        
+                    image.setAbsolutePosition(xPosImage, yPosImage);
                     PdfContentByte canvas = writer.getDirectContent();
                     canvas.addImage(image);
-            
-                    // Debugging confirmation
-                    
+        
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            
-            
-            
         
-            // Helper method to determine position based on alignment and marginPosition
-            private void setPosition(Document document) {
+            // Helper method to determine position for text based on alignment and marginPosition
+            private void setPositionForText(Document document) {
                 switch (marginPosition.toLowerCase()) {
                     case "left":
-                        xPos = document.left() - 20;
-                        yPos = getYPosBasedOnAlignment(alignment, document);
+                        xPosText = document.left() - 20;
+                        yPosText = getYPosBasedOnAlignment(alignment, document, false);
                         break;
                     case "right":
-                        xPos = isImage? document.right() :document.right() + 20;
-                        yPos = getYPosBasedOnAlignment(alignment, document);
+                        xPosText = document.right() + 20;
+                        yPosText = getYPosBasedOnAlignment(alignment, document, false);
                         break;
                     case "top":
-                        xPos = getXPosBasedOnAlignment(alignment, document);
-                        yPos = document.top() + 20;
+                        xPosText = getXPosBasedOnAlignment(alignment, document, false);
+                        yPosText = document.top() + 20;
                         break;
                     case "bottom":
-                        xPos = getXPosBasedOnAlignment(alignment, document);
-                        yPos = document.bottom() - 20;
+                        xPosText = getXPosBasedOnAlignment(alignment, document, false);
+                        yPosText = document.bottom() - 20;
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid margin position: " + marginPosition);
                 }
             }
         
-            // Helper method to determine Y position based on alignment for left/right margin
-            private float getYPosBasedOnAlignment(String alignment, Document document) {
+            // Helper method to determine position for image based on alignment and marginPosition
+            private void setPositionForImage(Document document) {
+                switch (marginPosition.toLowerCase()) {
+                    case "left":
+                        xPosImage = document.left() - 10;
+                        yPosImage = getYPosBasedOnAlignment(alignment, document, true);
+                        break;
+                    case "right":
+                        xPosImage = document.right();
+                        yPosImage = getYPosBasedOnAlignment(alignment, document, true);
+                        break;
+                    case "top":
+                        xPosImage = getXPosBasedOnAlignment(alignment, document, true);
+                        yPosImage = document.top();
+                        break;
+                    case "bottom":
+                        xPosImage = getXPosBasedOnAlignment(alignment, document, true);
+                        yPosImage = document.bottom() - 45;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid margin position: " + marginPosition);
+                }
+            }
+        
+            // Helper methods to determine positions based on alignment for left/right or top/bottom margin
+            private float getYPosBasedOnAlignment(String alignment, Document document, boolean forImage) {
                 switch (alignment.toLowerCase()) {
                     case "top":
-                        if (isImage) {
-                            return document.top();
-                        }
-                        return document.top()-(text.length()*2);
+                        return isImage ? document.top() : document.top() - (text.length() * 2);
                     case "center":
+                        System.out.println("isiamge: "+isImage+"text:"+text);
+
                         return (document.top() + document.bottom()) / 2;
                     case "bottom":
-                        if (isImage) {
-                            return document.bottom();
-                        }
-                        return document.bottom()+(text.length()*2);
+                        return isImage ? document.bottom() : document.bottom() + (text.length() * 2);
                     default:
                         throw new IllegalArgumentException("Invalid alignment for left/right margin: " + alignment);
                 }
             }
         
-            // Helper method to determine X position based on alignment for top/bottom margin
-            private float getXPosBasedOnAlignment(String alignment, Document document) {
+            private float getXPosBasedOnAlignment(String alignment, Document document, boolean forImage) {
                 switch (alignment.toLowerCase()) {
                     case "left":
-                        if (isImage) {
-                            return document.left();
-                        }
-                        return document.left()+(text.length()*2);
+                        System.out.println("isiamge: "+isImage+"text:"+text);
+
+                        return isImage ? document.left() : document.left() + (text.length() * 2);
                     case "center":
                         return (document.left() + document.right()) / 2;
                     case "right":
-                        if (isImage) {
-                            return document.right();
-                        }
-                        return document.right()-(text.length()*2);
+                        return isImage ? document.right() : document.right() - (text.length() * 2);
                     default:
                         throw new IllegalArgumentException("Invalid alignment for top/bottom margin: " + alignment);
                 }
             }
         }
+        
+        
         
     
     
