@@ -109,5 +109,18 @@ public class PdfController {
               .body(new InputStreamResource(pdf));
   }
 
+  @PostMapping("api/v0/createkycpdf")
+  public ResponseEntity<InputStreamResource> createkycPdf() {
+
+      ByteArrayInputStream pdf = pdfService.createKycFormPdf();
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.add("Content-Disposition", "inline; filename=test.pdf");
+      return ResponseEntity
+              .ok()
+              .headers(httpHeaders)
+              .contentType(MediaType.APPLICATION_PDF)
+              .body(new InputStreamResource(pdf));
+  }
+
 
 }

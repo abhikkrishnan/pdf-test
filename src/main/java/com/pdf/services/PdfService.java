@@ -12,10 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
-// import com.itextpdf.awt.geom.CubicCurve2D.Float;
+import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.HeaderFooter;
@@ -24,12 +26,18 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.ColumnText;
+import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfFormField;
 import com.lowagie.text.pdf.PdfGState;
 import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.draw.DottedLineSeparator;
 
 
 
@@ -577,10 +585,165 @@ public class PdfService {
                 }
             }
         }
+
+        public ByteArrayInputStream createKycFormPdf() {
+            String title = "Know Your Customer (KYC) Application Form | Individual";
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Document document = new Document(PageSize.A4, 35, 35, 25, 25);
+        
+            try {
+                PdfWriter writer = PdfWriter.getInstance(document, out);
+                document.open();
+        
+                // Title
+                Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+                Paragraph titlePara = new Paragraph(title, titleFont);
+                titlePara.setAlignment(Element.ALIGN_CENTER);
+                titlePara.setSpacingAfter(15);
+                document.add(titlePara);
+        
+                // Section 1: Personal Details
+                Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+                Font fieldFont = FontFactory.getFont(FontFactory.HELVETICA, 11);
+                Font subsectionFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+
+        
+                Paragraph section1 = new Paragraph("1. Personal Details", sectionFont);
+                section1.setSpacingBefore(15);
+                document.add(section1);
+        
+                // Adding personal details fields as paragraphs
+
+                // document.add(createLabelWithTab("Name* (Same as in Id proof):\t Abhijith K", fieldFont));
+                document.add(createLabelWithTab("Name* (Same as in Id proof)", "", fieldFont));
+                document.add(createLabelWithTab("Date of Birth*", "", fieldFont));
+
+                document.add(createLabelWithTab("Maiden Name","", fieldFont));
+                document.add(createLabelWithTab("Father/Spouse Name*","", fieldFont));
+                document.add(createLabelWithTab("Mother Name","", fieldFont));
+                document.add(createLabelWithTab("Date of Birth*","", fieldFont));
+                document.add(createLabelWithTab("Gender*","", fieldFont));
+                document.add(createLabelWithTab("PAN*","", fieldFont));
+                document.add(createLabelWithTab("Marital Status*","", fieldFont));
+                document.add(createLabelWithTab("Citizenship*","", fieldFont));
+        
+                // Section 2: Proof of Identity and Address
+                Paragraph section2 = new Paragraph("2. Proof of Identity and Address", sectionFont);
+                section2.setSpacingBefore(15);
+                document.add(section2);
+                Paragraph section2sub = new Paragraph("Certified copy of OVD or equivalent e-document of OVD or OVD obtained through digital KYC process needs to be submitted (anyone of the following OVDs)", subsectionFont);
+                section2sub.setSpacingAfter(10);
+                section2sub.setSpacingBefore(8);
+                document.add(section2sub);
+
+                
+        
+                // Adding proof of identity fields as paragraphs
+                document.add(createLabelWithTabwithExpt("A - Passport Number","Passport Expiry Date :", fieldFont));
+                document.add(createLabelWithTab("B - Voter ID Card","", fieldFont));
+                document.add(createLabelWithTabwithExpt("C - Driving Licence","Licence Expiry Date :", fieldFont));
+                document.add(createLabelWithTab("D - NREGA Job Card","", fieldFont));
+                document.add(createLabelWithTab("E - National Population Register Letter","", fieldFont));
+                document.add(createLabelWithTabWithHiddenText("F - Proof of Possession of Aadhaar", "No need to attach. Aadhaar card. If submitted, Aadhaar Number to be masked by the customer", fieldFont, writer));
+                document.add(createLabelWithTabWithHiddenText("ii E-KYC Authentication", "No need to attach. Aadhaar card. If submitted, Aadhaar Number to be masked by the customer", fieldFont, writer));
+                document.add(createLabelWithTabWithHiddenText("iii Offline verification of Aadhaar", "No need to attach. Aadhaar card. If submitted, Aadhaar Number to be masked by the customer", fieldFont, writer));
+
+        
+                // Add other sections similarly
+        
+            } catch (DocumentException ex) {
+                System.out.println("Error occurred: " + ex.getMessage());
+            } finally {
+                if (document.isOpen()) {
+                    document.close();
+                }
+            }
+            return new ByteArrayInputStream(out.toByteArray());
+
+            
+        }
+
+        public Paragraph createLabelWithTab(String label, String value, Font font) {
+            Paragraph paragraph = new Paragraph();
+            paragraph.setFont(font);
+
+            // Add a blank Chunk with a specific width to simulate a tab
+            Chunk tabSpace = new Chunk(" ");
+            tabSpace.setHorizontalScaling(5f); // Adjust the scaling factor as needed for tab width
+            paragraph.add(tabSpace);
+        
+            // Add label
+            paragraph.add(new Chunk(label + ": ", font));
+        
+            // Add a blank Chunk with a specific width to simulate a tab
+            Chunk tabSpace1 = new Chunk(" ");
+            tabSpace1.setHorizontalScaling(5f); // Adjust the scaling factor as needed for tab width
+            paragraph.add(tabSpace);
+        
+            // Add value
+            paragraph.add(new Chunk(value, font));
+        
+            return paragraph;
+        }
+
+        public Paragraph createLabelWithTabwithExpt(String label, String value, Font font) {
+            Paragraph paragraph = new Paragraph();
+            paragraph.setFont(font);
+
+            // Add a blank Chunk with a specific width to simulate a tab
+            Chunk tabSpace = new Chunk(" ");
+            tabSpace.setHorizontalScaling(5f); // Adjust the scaling factor as needed for tab width
+            paragraph.add(tabSpace);
+        
+            // Add label
+            paragraph.add(new Chunk(label + ": ", font));
+        
+              // Add a larger blank Chunk to create more space before the value
+            Chunk additionalSpace = new Chunk("                                 "); // Add spaces as needed
+            additionalSpace.setHorizontalScaling(1.5f); // Scaling to fine-tune the width of the blank space
+            paragraph.add(additionalSpace);
+        
+            // Add value
+            paragraph.add(new Chunk(value, font));
+        
+            return paragraph;
+        }
+
+        public Paragraph createLabelWithTabWithHiddenText(String label, String value, Font font, PdfWriter writer) {
+    // Main paragraph with specified font
+    Paragraph paragraph = new Paragraph();
+    paragraph.setFont(font);
+
+    // Add an initial blank Chunk for spacing before the label
+    Chunk initialSpace = new Chunk("     "); // Adjust the spaces as needed
+    paragraph.add(initialSpace);
+
+    // Create the label chunk
+    Chunk labelChunk = new Chunk(label + ": ", font);
+
+    // Create the value chunk with the hidden text font, opacity, and gray color
+    Font hiddenTextFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7); // Set to gray color
+    hiddenTextFont.setColor(192,192,192);
+    Chunk valueChunk = new Chunk(value, hiddenTextFont);
+
+    // Set up PdfContentByte for opacity settings
+    PdfContentByte canvas = writer.getDirectContent();
+    PdfGState gState = new PdfGState();
+    gState.setFillOpacity(0.5f); // Set the desired opacity level
+    canvas.setGState(gState);
+
+    // Add label and value chunks to paragraph
+    paragraph.add(labelChunk);
+    paragraph.add(initialSpace);
+    paragraph.add(valueChunk); // The value will appear directly after the label
+
+    return paragraph;
+}
+
         
         
         
-    
+        
     
     
 }
