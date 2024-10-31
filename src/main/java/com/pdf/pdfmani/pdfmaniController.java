@@ -1,16 +1,23 @@
 package com.pdf.pdfmani;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.lowagie.text.PageSize;
+
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 
 @RestController
@@ -91,6 +98,48 @@ public class pdfmaniController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfContent);
+    }
+
+    @GetMapping("/create-pdf-merged")
+    public ResponseEntity<byte[]> create_Pdf_merged() throws IOException {
+        byte[] pdfContent = pdfService.mergePdfs();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "sample.pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfContent);
+    }
+
+    @GetMapping("/resize-page")
+    public ResponseEntity<byte[]> resize_page(@RequestParam String pagesize) throws IOException {
+
+        PDRectangle size = mapPageSize(pagesize);
+
+        byte[] pdfContent = pdfService.resizePdf(size);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "sample.pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfContent);
+    }
+
+    // Helper method to map the psize string to a Rectangle object
+    private PDRectangle mapPageSize(String psize) {
+        switch (psize.toUpperCase()) {
+            case "A1": return PDRectangle.A1;
+            case "A2": return PDRectangle.A2;
+            case "A3": return PDRectangle.A3;
+            case "A4": return PDRectangle.A4;
+            case "A5": return PDRectangle.A5;
+            case "A6": return PDRectangle.A6;
+            default: return null; // Return null for invalid page size
+        }
     }
     
 }

@@ -193,7 +193,7 @@ public class PdfService {
             document.open();
     
             // Importing an existing PDF page
-            File file = new File("src/main/resources/pdf/existing.pdf");
+            File file = new File("src/main/resources/existing.pdf");
             PdfReader reader = new PdfReader(new FileInputStream(file));
             pageSize = reader.getPageSize(1); // Original size of the imported PDF page
     

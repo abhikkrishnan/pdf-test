@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -11,8 +15,17 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.pdfbox.util.Matrix;
 import org.springframework.stereotype.Service;
+import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 
 @Service
 public class pdfmaniService {
@@ -184,6 +197,67 @@ public class pdfmaniService {
             return baos.toByteArray();
         }
     }
+
+    public byte[] mergePdfs() throws IOException {
+        try (PDDocument mergedDocument = new PDDocument();
+             PDDocument firstDocument = PDDocument.load(new File("src/main/resources/existing.pdf"));
+             PDDocument secondDocument = PDDocument.load(new File("src/main/resources/lanscape.pdf"))) {
+            
+            // Add all pages from the first document to the merged document
+            for (PDPage page : firstDocument.getPages()) {
+                mergedDocument.addPage(page);
+            }
+    
+            // Add all pages from the second document to the merged document
+            for (PDPage page : secondDocument.getPages()) {
+                mergedDocument.addPage(page);
+            }
+    
+            // Save the merged PDF to ByteArrayOutputStream to return as byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            mergedDocument.save(baos);
+            return baos.toByteArray();
+        }
+    }
+
+
+    public byte[] resizePdf(PDRectangle newSize) throws IOException {
+        try (PDDocument document = PDDocument.load(new File("src/main/resources/existing.pdf"))) {
+            PDDocument newDocument = new PDDocument();
+            PDFRenderer renderer = new PDFRenderer(document);
+
+            for (int i = 0; i < document.getNumberOfPages(); i++) {
+                PDPage newPage = new PDPage(newSize);
+                newDocument.addPage(newPage);
+
+                // Render the original page to a BufferedImage
+                BufferedImage image = renderer.renderImage(i);
+
+                // Create a PDImageXObject from BufferedImage using LosslessFactory
+                PDImageXObject pdImage = LosslessFactory.createFromImage(newDocument, image);
+
+                // Calculate scale factors to fit the new page size
+                float scaleX = newSize.getWidth() / document.getPage(i).getMediaBox().getWidth();
+                float scaleY = newSize.getHeight() / document.getPage(i).getMediaBox().getHeight();
+
+                try (PDPageContentStream contentStream = new PDPageContentStream(newDocument, newPage)) {
+                    // Draw the image onto the new page with scaling
+                    contentStream.drawImage(pdImage, 0, 0, image.getWidth() * scaleX, image.getHeight() * scaleY);
+                }
+            }
+
+            // Save the resized PDF to ByteArrayOutputStream to return as byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            newDocument.save(baos);
+            newDocument.close();
+            return baos.toByteArray();
+        }
+    }
+
+
+
+
+
 }
 
 
