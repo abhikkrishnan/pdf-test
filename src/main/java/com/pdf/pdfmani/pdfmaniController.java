@@ -150,5 +150,35 @@ public class pdfmaniController {
                 .headers(headers)
                 .body(pdfContent);
     }
+
+    @GetMapping("/add-margin-content")
+    public ResponseEntity<byte[]> add_margin_content(@RequestParam String Position,@RequestParam String Alignment,
+        	@RequestParam String Text,@RequestParam Boolean IsImage) throws IOException {
+
+        byte[] pdfContent = pdfService.addMarginWithContent(0.4f,Position,Alignment,Text,true,IsImage);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "sample.pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfContent);
+    }
+
+    @GetMapping("/generate-kyc-document")
+    public ResponseEntity<byte[]> generate_kyc_doc() throws IOException {
+
+        byte[] pdfContent = pdfService.generateCKYCPdf();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "sample.pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfContent);
+    }
+
     
 }
