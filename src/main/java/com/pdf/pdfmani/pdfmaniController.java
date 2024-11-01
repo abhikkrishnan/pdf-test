@@ -1,21 +1,16 @@
 package com.pdf.pdfmani;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.lowagie.text.PageSize;
 
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
@@ -140,6 +135,20 @@ public class pdfmaniController {
             case "A6": return PDRectangle.A6;
             default: return null; // Return null for invalid page size
         }
+    }
+
+    @GetMapping("/add-margin")
+    public ResponseEntity<byte[]> add_margin(@RequestParam float margin) throws IOException {
+
+        byte[] pdfContent = pdfService.addMarginToPdf(margin);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "sample.pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfContent);
     }
     
 }

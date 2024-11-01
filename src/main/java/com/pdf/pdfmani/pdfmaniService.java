@@ -1,11 +1,8 @@
 package com.pdf.pdfmani;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -15,17 +12,12 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.apache.pdfbox.util.Matrix;
 import org.springframework.stereotype.Service;
-import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 
 @Service
 public class pdfmaniService {
@@ -225,27 +217,26 @@ public class pdfmaniService {
         try (PDDocument document = PDDocument.load(new File("src/main/resources/existing.pdf"))) {
             PDDocument newDocument = new PDDocument();
             PDFRenderer renderer = new PDFRenderer(document);
-
+            
+            // Set a high DPI value for better quality (e.g., 300 DPI)
+            final float targetDpi = 300;
+    
             for (int i = 0; i < document.getNumberOfPages(); i++) {
                 PDPage newPage = new PDPage(newSize);
                 newDocument.addPage(newPage);
-
-                // Render the original page to a BufferedImage
-                BufferedImage image = renderer.renderImage(i);
-
+    
+                // Render the original page to a high-resolution BufferedImage
+                BufferedImage image = renderer.renderImageWithDPI(i, targetDpi);
+    
                 // Create a PDImageXObject from BufferedImage using LosslessFactory
                 PDImageXObject pdImage = LosslessFactory.createFromImage(newDocument, image);
-
-                // Calculate scale factors to fit the new page size
-                float scaleX = newSize.getWidth() / document.getPage(i).getMediaBox().getWidth();
-                float scaleY = newSize.getHeight() / document.getPage(i).getMediaBox().getHeight();
-
+    
+                // Fit image to new page size without cropping
                 try (PDPageContentStream contentStream = new PDPageContentStream(newDocument, newPage)) {
-                    // Draw the image onto the new page with scaling
-                    contentStream.drawImage(pdImage, 0, 0, image.getWidth() * scaleX, image.getHeight() * scaleY);
+                    contentStream.drawImage(pdImage, 0, 0, newSize.getWidth(), newSize.getHeight());
                 }
             }
-
+    
             // Save the resized PDF to ByteArrayOutputStream to return as byte array
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             newDocument.save(baos);
@@ -254,8 +245,111 @@ public class pdfmaniService {
         }
     }
 
+    public byte[] addMarginToPdf(float marginSize) throws IOException {
+        marginSize*=72;
+        try (PDDocument document = PDDocument.load(new File("src/main/resources/existing.pdf"))) {
+            PDDocument newDocument = new PDDocument();
+            PDFRenderer renderer = new PDFRenderer(document);
+    
+            for (int i = 0; i < document.getNumberOfPages(); i++) {
+                PDPage originalPage = document.getPage(i);
+                PDRectangle originalSize = originalPage.getMediaBox();
+    
+                // Create a new page with the same original size
+                PDPage newPage = new PDPage(originalSize);
+                newDocument.addPage(newPage);
+    
+                // Render the original page to a high-resolution BufferedImage
+                BufferedImage image = renderer.renderImageWithDPI(i, 300);
+    
+                // Create a PDImageXObject from BufferedImage using LosslessFactory
+                PDImageXObject pdImage = LosslessFactory.createFromImage(newDocument, image);
+    
+                // Calculate the scale factor to fit within the margin
+                float scale = Math.min(
+                    (originalSize.getWidth() - 2 * marginSize) / image.getWidth(),
+                    (originalSize.getHeight() - 2 * marginSize) / image.getHeight()
+                );
+    
+                // Calculate positions to center the scaled content with the margin
+                float xPosition = (originalSize.getWidth() - image.getWidth() * scale) / 2;
+                float yPosition = (originalSize.getHeight() - image.getHeight() * scale) / 2;
+    
+                try (PDPageContentStream contentStream = new PDPageContentStream(newDocument, newPage)) {
+                    // Draw the image scaled down and centered within the original page size
+                    contentStream.drawImage(pdImage, xPosition, yPosition, image.getWidth() * scale, image.getHeight() * scale);
+                }
+            }
+    
+            // Save the modified PDF to ByteArrayOutputStream to return as byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            newDocument.save(baos);
+            newDocument.close();
+            return baos.toByteArray();
+        }
+    }
 
+    public byte[] addMarginWithContent(
+        float marginSize, String position, String alignment, String text, boolean placeText,
+        boolean placeImage
+    ) throws IOException {
+        // First, add margin to the PDF using the previous method
+        byte[] pdfWithMargin = addMarginToPdf(marginSize);
 
+        // Load the modified document to add the content in the margin
+        try (PDDocument document = PDDocument.load(pdfWithMargin)) {
+            for (PDPage page : document.getPages()) {
+                PDRectangle pageSize = page.getMediaBox();
+                float contentX = marginSize;
+                float contentY;
+
+                // Determine the y-position based on the specified alignment
+                if (alignment.equalsIgnoreCase("top")) {
+                    contentY = pageSize.getHeight() - marginSize - 20; // Fixed padding
+                } else if (alignment.equalsIgnoreCase("center")) {
+                    contentY = (pageSize.getHeight() / 2) - 10; // Center vertically
+                } else if (alignment.equalsIgnoreCase("bottom")) {
+                    contentY = marginSize; // Padding from the bottom
+                } else {
+                    throw new IllegalArgumentException("Invalid alignment: " + alignment);
+                }
+
+                // Adjust content position based on specified position
+                if (position.equalsIgnoreCase("left")) {
+                    contentX = marginSize; // Fixed padding from left
+                } else if (position.equalsIgnoreCase("right")) {
+                    contentX = pageSize.getWidth() - marginSize - 100; // Fixed padding from right
+                } else {
+                    throw new IllegalArgumentException("Invalid position: " + position);
+                }
+
+                try (PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true)) {
+                    // Place text if requested
+                    if (placeText) {
+                        contentStream.beginText();
+                        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+                        contentStream.newLineAtOffset(contentX, contentY);
+                        contentStream.showText(text);
+                        contentStream.endText();
+                    }
+
+                    String imagePath ="src/main/resources/images/tech.png";
+
+                    // Place image if requested
+                    if (placeImage) {
+                        PDImageXObject pdImage = PDImageXObject.createFromFile(imagePath, document);
+                        // Adjust image size as needed
+                        contentStream.drawImage(pdImage, contentX, contentY - 20, 50, 50); // Adjust size and position
+                    }
+                }
+            }
+
+            // Save the final PDF with margin and content to a ByteArrayOutputStream to return as byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            document.save(baos);
+            return baos.toByteArray();
+        }
+    }
 
 
 }
