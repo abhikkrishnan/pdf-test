@@ -25,8 +25,6 @@ import org.apache.pdfbox.util.Matrix;
 import org.springframework.stereotype.Service;
 
 
-import javafx.scene.paint.Color;
-
 
 @Service
 public class pdfmaniService {

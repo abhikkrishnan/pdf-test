@@ -4,10 +4,1473 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sample PDF</title>
-    <link rel="stylesheet" href="style.css"> <!-- Correct usage -->
+    <style>
+        .heading{
+            height: 30px;
+            width: 100%;
+            background-color: orange;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is a sample PDF document.</p>
+    <div class="header" style="height: 30px;width: 100%;background-color: orange;">
+        <h3 style="color: white;padding-top: 4px;text-align: center;"><b>CENTRAL KYC REGISTRY | Know Your Customer (KYC) Application Form | Individual</b></h3>
+    </div>
+    <div class="instr">
+        <h3>Important Instructions:</h3>
+        <table style="width: 100%;">
+            <tr>
+                <td>A) Fields marked with ‘*’ are mandatory fields.</td>
+                <td>E) List of State / U.T code as per Indian Motor Vehicle Act, 1988 is available at the end.</td>
+            </tr>
+            <tr>
+                <td>B) Please fill the form in English and in BLOCK letters.</td>
+                <td>F) List of two character ISO 3166 country codes is available at the end.</td>
+            </tr>
+            <tr>
+                <td>C) Please fill the date in DD-MM-YYYY format.</td>
+                <td>G) KYC number of applicant is mandatory for update application.</td>
+            </tr>
+            <tr>
+                <td>D) Please read section wise detailed guidelines / instructions
+                    at the end.</td>
+                <td>H) For particular section update, please tick (&#10003;) in the box available before the
+                    section number and strike off the sections not required to be updated.</td>
+            </tr>
+        </table>
+    </div>
+    <div class="office-use1">
+        <table style="background-color: rgb(148, 184, 206);padding: 15px 5px;width: 100%;">
+            <tr>
+                <td rowspan="3"><h3>For office use only</h3><span>(To be filled by financial institution)</span></td>
+                <td  style="padding-left: 9px">Application Type*</td>
+                <td><input style="accent-color:rgb(192, 192, 192);" type="checkbox">New</td>
+                <td></td>
+                <td><input style="accent-color:rgb(192, 192, 192);" type="checkbox">Update</td>
+            </tr>
+            <tr>
+                
+                <td style="padding-left: 9px">KYC Number</td>
+                <td colspan="2"></td>
+                <td>(Mandatory for KYC update request)</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 9px">Account Type*</td>
+                <td><input style="accent-color:rgb(192, 192, 192);" type="checkbox">Normal</td>
+                <td><input style="accent-color:rgb(192, 192, 192);" type="checkbox">Simplified (for low risk customers)</td>
+                <td><input style="accent-color:rgb(192, 192, 192);padding-left: 12px;" type="checkbox">Small</td>
+            </tr>
+        </table>
+    </div>
+    <div class="personal-detail" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">1. <b>Personal Details</b> <span>(Please refer intruction A at the end)</span></h3>
+    </div>
+    <div class="name-lbl">
+        <table>
+            <tr>
+                <td></td>
+                <td><Span >Prefix</Span></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <div class="personal-detail" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            2. <b>TICK IF APPLICABLE</b> RESIDENCE FOR TAX PURPOUSES IN JURISDICTION(S) OUTSIDE INDIA <span>(Please refer instruction B at the end)</span>
+        </h3>
+    </div>
+    <div class="poi-detail" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            3. <b> PROOF OF IDENTITY (PoI)*</b> <span>(Please refer instruction C at the end)</span>
+        </h3>
+    </div>
+    <div class="poa-detail" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            4. <b> PROOF OF ADDRESS (PoA)*</b> 
+        </h3>
+    </div>
+    <div class="contact-detail" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            5. <b>  CONTACT DETAILS </b> <span>(All communications will be sent on provided Mobile no. / Email-ID) (Please refer instruction F at the end)</span> 
+        </h3>
+    </div>
+    <div class="rel-pers-detail" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            6. <b>  DETAILS OF RELATED PERSON</b> <span>(In case of additional related persons, please fill ‘Annexure B1’ ) (please refer instruction G at the end)</span>
+        </h3>
+    </div>
+    <div class="remark" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            7. <b> REMARKS (If any)</b> 
+        </h3>
+    </div>
+    <div class="declaration" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            8. <b>APPLICANT DECLARATION</b> 
+        </h3>
+    </div>
+    <div class="attestation" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            9. <b>ATTESTATION / FOR OFFICE USE ONLY</b> 
+        </h3>
+    </div>
+    <div class="attestation" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            <b>CENTRAL KYC REGISTRY | Instructions / Check list / Guidelines for filling Individual KYC Application Form</b> 
+        </h3>
+    </div>
+    <div class="state-list" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            <b>List of two – digit state / U.T codes as per Indian Motor Vehicle Act, 1988</b> 
+        </h3>
+    </div>
+    <div class="states-code" style="margin:15px 0px;">
+        <table cellspacing="0" cellpadding="0" style="width: 100%;">
+        <tr style="text-align: center;background-color: rgb(148, 189, 243);">
+            <th>
+                <p><span>State / U.T</span></p>
+            </th>
+            <th>
+                <p><span >Code</span></p>
+            </th>
+            <th>
+                <p><span >State / U.T</span></p>
+            </th>
+            <th>
+                <p><span >Code </span></p>
+            </th>
+            <th>
+                <p><span >State / U.T</span></p>
+            </th>
+            <th>
+                <p><span >Code </span></p>
+            </th>
+        </tr>
+        <tr style="text-align: center;">
+            <td>
+                <p><span >Andaman &amp; Nicobar</span></p>
+            </td>
+            <td>
+                <p><span >AN</span></p>
+            </td>
+            <td>
+                <p><span >Himachal Pradesh</span></p>
+            </td>
+            <td>
+                <p><span >HP </span></p>
+            </td>
+            <td>
+                <p><span >Pondicherry</span></p>
+            </td>
+            <td>
+                <p><span >PY </span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;background-color: rgb(204, 213, 224);">
+            <td>
+                <p><span >Andhra Pradesh</span></p>
+            </td>
+            <td>
+                <p><span >AP</span></p>
+            </td>
+            <td>
+                <p><span >Jammu &amp; Kashmir</span></p>
+            </td>
+            <td>
+                <p><span >JK </span></p>
+            </td>
+            <td>
+                <p><span >Punjab</span></p>
+            </td>
+            <td>
+                <p><span >PB</span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;">
+            <td>
+                <p><span >Arunachal Pradesh</span></p>
+            </td>
+            <td>
+                <p><span >AR</span></p>
+            </td>
+            <td>
+                <p><span >Jharkhand</span></p>
+            </td>
+            <td>
+                <p><span >JH </span></p>
+            </td>
+            <td>
+                <p><span >Rajasthan</span></p>
+            </td>
+            <td>
+                <p><span >RJ</span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;background-color: rgb(204, 213, 224);">
+            <td
+                >
+                <p><span >Assam</span></p>
+            </td>
+            <td
+                >
+                <p><span >AS</span></p>
+            </td>
+            <td
+                >
+                <p><span >Karnataka</span></p>
+            </td>
+            <td
+                >
+                <p><span >KA </span></p>
+            </td>
+            <td
+                >
+                <p><span >Sikkim</span></p>
+            </td>
+            <td
+                >
+                <p><span >SK</span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;" >
+            <td
+                >
+                <p><span >Bihar</span></p>
+            </td>
+            <td
+                >
+                <p><span >BR</span></p>
+            </td>
+            <td
+                >
+                <p><span >Kerala</span></p>
+            </td>
+            <td
+                >
+                <p><span >KL </span></p>
+            </td>
+            <td
+                >
+                <p><span >Tamil Nadu</span></p>
+            </td>
+            <td
+                >
+                <p><span >TN</span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;background-color: rgb(204, 213, 224);" >
+            <td
+                >
+                <p><span >Chandigarh</span></p>
+            </td>
+            <td
+                >
+                <p><span >CH</span></p>
+            </td>
+            <td
+                >
+                <p><span >Lakshadweep</span></p>
+            </td>
+            <td
+                >
+                <p><span >LD </span></p>
+            </td>
+            <td
+                >
+                <p><span >Telangana</span></p>
+            </td>
+            <td
+                >
+                <p><span >TS</span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;">
+            <td
+                >
+                <p><span >Chattisgarh</span></p>
+            </td>
+            <td
+                >
+                <p><span >CG</span></p>
+            </td>
+            <td
+                >
+                <p><span >Madhya Pradesh</span></p>
+            </td>
+            <td
+                >
+                <p><span >MP</span></p>
+            </td>
+            <td
+                >
+                <p><span > Tripura</span></p>
+            </td>
+            <td
+                >
+                <p><span >TR</span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;background-color: rgb(204, 213, 224);">
+            <td
+                >
+                <p><span >Dadra and Nagar Haveli</span></p>
+            </td>
+            <td
+                >
+                <p><span >DN</span></p>
+            </td>
+            <td
+                >
+                <p><span >Maharashtra</span></p>
+            </td>
+            <td
+                >
+                <p><span >MH </span></p>
+            </td>
+            <td
+                >
+                <p><span >Uttar Pradesh</span></p>
+            </td>
+            <td
+                >
+                <p><span >UP</span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;">
+            <td
+                >
+                <p><span >Daman &amp; Diu</span></p>
+            </td>
+            <td
+                >
+                <p><span >DD</span></p>
+            </td>
+            <td
+                >
+                <p><span >Manipur</span></p>
+            </td>
+            <td
+                >
+                <p><span >MN </span></p>
+            </td>
+            <td
+                >
+                <p><span >Uttarakhand</span></p>
+            </td>
+            <td
+                >
+                <p><span >UA</span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;background-color: rgb(204, 213, 224);">
+            <td
+                >
+                <p><span >Delhi</span></p>
+            </td>
+            <td
+                >
+                <p><span >DL</span></p>
+            </td>
+            <td
+                >
+                <p><span >Meghalaya</span></p>
+            </td>
+            <td
+                >
+                <p><span >ML </span></p>
+            </td>
+            <td
+                >
+                <p><span >West Bengal</span></p>
+            </td>
+            <td
+                >
+                <p><span >WB</span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;">
+            <td
+                >
+                <p><span >Goa</span></p>
+            </td>
+            <td
+                >
+                <p><span >GA</span></p>
+            </td>
+            <td
+                >
+                <p><span >Mizoram</span></p>
+            </td>
+            <td
+                >
+                <p><span >MZ </span></p>
+            </td>
+            <td
+                >
+                <p><span >Other</span></p>
+            </td>
+            <td
+                >
+                <p><span >XX</span></p>
+            </td>
+        </tr>
+        <tr style="text-align: center;background-color: rgb(204, 213, 224);">
+            <td>
+                <p><span >Gujarat</span></p>
+            </td>
+            <td>
+                <p><span >GJ</span></p>
+            </td>
+            <td>
+                <p><span >Nagaland</span></p>
+            </td>
+            <td>
+                <p><span >NL</span></p>
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="text-align: center;">
+            <td>
+                <p><span >Haryana</span></p>
+            </td>
+            <td>
+                <p><span >HR</span></p>
+
+            </td>
+            <td>
+                <p><span >Orissa</span></p>
+            </td>
+            <td>
+                <p><span >OR</span></p>
+            </td>
+            
+        </tr>
+    </table>
+    </div>
+    <div class="country-code" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
+        <!-- <input type="checkbox" name="" id=""> -->
+        <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
+            <b>List of ISO 3166 two- digit Country Code</b> 
+        </h3>
+    </div>
+    <div class="iso-table">
+        <table cellspacing="0" cellpadding="0">
+        <tr>
+            <td>
+                <p ><span >Afghanistan</span></p>
+            </td>
+            <td>
+                <p ><span >Dominican Republic</span></p>
+            </td>
+            <td>
+                <p ><span >&#xa0;</span></p>
+            </td>
+            <td>
+                <p ><span >Saint Pierre and Miquelon</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Aland Islands</span></p>
+            </td>
+            <td>
+                <p ><span >Ecuador</span></p>
+            </td>
+            <td>
+                <p ><span >Liechtenstein</span></p>
+            </td>
+            <td>
+                <p ><span >Saint Vincent and the Grenadines</span>
+                </p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Albania</span></p>
+            </td>
+            <td>
+                <p ><span >Egypt</span></p>
+            </td>
+            <td>
+                <p ><span >Lithuania</span></p>
+            </td>
+            <td>
+                <p ><span >Samoa</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Algeria</span></p>
+            </td>
+            <td>
+                <p ><span >El Salvador</span></p>
+            </td>
+            <td>
+                <p ><span >Luxembourg</span></p>
+            </td>
+            <td>
+                <p ><span >San Marino</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >American Samoa</span></p>
+            </td>
+            <td>
+                <p ><span >Equatorial Guinea</span></p>
+            </td>
+            <td>
+                <p ><span >Macao</span></p>
+            </td>
+            <td>
+                <p ><span >Sao Tome and Principe</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Andorra</span></p>
+            </td>
+            <td>
+                <p ><span >Eritrea</span></p>
+            </td>
+            <td>
+                <p ><span >Macedonia, the former Yugoslav
+                        Republic</span></p>
+                <p ><span >of</span></p>
+            </td>
+            <td>
+                <p ><span >Saudi Arabia</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Angola</span></p>
+            </td>
+            <td>
+                <p ><span >Estonia</span></p>
+            </td>
+            <td>
+                <p ><span >Madagascar</span></p>
+            </td>
+            <td>
+                <p ><span >Senegal</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Anguilla</span></p>
+            </td>
+            <td>
+                <p ><span >Ethiopia</span></p>
+            </td>
+            <td>
+                <p ><span >Malawi</span></p>
+            </td>
+            <td>
+                <p ><span >Serbia</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Antarctica</span></p>
+            </td>
+            <td>
+                <p ><span >Falkland islands (Malvinas)</span></p>
+            </td>
+            <td>
+                <p ><span >Malaysia</span></p>
+            </td>
+            <td>
+                <p ><span >Seychelles</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Antigua and Barbuda</span></p>
+            </td>
+            <td>
+                <p ><span >Faroe .......</span></p>
+            </td>
+            <td>
+                <p ><span >Maldives</span></p>
+            </td>
+            <td>
+                <p ><span >Sierra Leone</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Argentina</span></p>
+            </td>
+            <td>
+                <p ><span >Fiji</span></p>
+            </td>
+            <td>
+                <p ><span >Mali</span></p>
+            </td>
+            <td>
+                <p ><span >Singapore</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Armenia</span></p>
+            </td>
+            <td>
+                <p ><span >Finland</span></p>
+            </td>
+            <td>
+                <p ><span >Malta</span></p>
+            </td>
+            <td>
+                <p ><span >Sint Maarten (Dutch part)</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Aruba</span></p>
+            </td>
+            <td>
+                <p ><span >France</span></p>
+            </td>
+            <td>
+                <p ><span >Marshall .......</span></p>
+            </td>
+            <td>
+                <p ><span >Slovakia</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Australia</span></p>
+            </td>
+            <td>
+                <p ><span >French Guiana</span></p>
+            </td>
+            <td>
+                <p ><span >Martinique</span></p>
+            </td>
+            <td>
+                <p ><span >Slovenia</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Austria</span></p>
+            </td>
+            <td>
+                <p ><span >French Polynesia</span></p>
+            </td>
+            <td>
+                <p ><span >Mauritania</span></p>
+            </td>
+            <td>
+                <p ><span >Solomon islands</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Azerbaijan</span></p>
+            </td>
+            <td>
+                <p ><span >French Southern Territories</span></p>
+            </td>
+            <td>
+                <p ><span >Mauritius</span></p>
+            </td>
+            <td>
+                <p ><span >Somalia</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Bahamas</span></p>
+            </td>
+            <td>
+                <p ><span >Gabon</span></p>
+            </td>
+            <td>
+                <p ><span >Mayotte</span></p>
+            </td>
+            <td>
+                <p ><span >South Africa</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Bahrain</span></p>
+            </td>
+            <td>
+                <p ><span >Gambia</span></p>
+            </td>
+            <td>
+                <p ><span >Mexico</span></p>
+            </td>
+            <td>
+                <p ><span >South Georgia and the South
+                        Sandwich</span></p>
+                <p ><span >islands</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Bangladesh</span></p>
+            </td>
+            <td>
+                <p ><span >Georgia</span></p>
+            </td>
+            <td>
+                <p ><span >Micronesia, Federated States of</span>
+                </p>
+            </td>
+            <td>
+                <p ><span >South Sudan</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Barbados</span></p>
+            </td>
+            <td>
+                <p ><span >Germany</span></p>
+            </td>
+            <td>
+                <p ><span >Mokiova, Republic of</span></p>
+            </td>
+            <td>
+                <p ><span >Spain</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Belarus</span></p>
+            </td>
+            <td>
+                <p ><span >Ghana</span></p>
+            </td>
+            <td>
+                <p ><span >Monaco</span></p>
+            </td>
+            <td>
+                <p ><span >Sri Lanka</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Belgium</span></p>
+            </td>
+            <td>
+                <p ><span >Gibraltar</span></p>
+            </td>
+            <td>
+                <p ><span >Mongolia</span></p>
+            </td>
+            <td>
+                <p ><span >Sudan</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Belize</span></p>
+            </td>
+            <td>
+                <p ><span >Greece</span></p>
+            </td>
+            <td>
+                <p ><span >Montenegro</span></p>
+            </td>
+            <td>
+                <p ><span >Suriname</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Benin</span></p>
+            </td>
+            <td>
+                <p ><span >Greenland</span></p>
+            </td>
+            <td>
+                <p ><span >Montserrat</span></p>
+            </td>
+            <td>
+                <p ><span >Svalbard and Jan Mayen</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Bermuda</span></p>
+            </td>
+            <td>
+                <p ><span >Grenada</span></p>
+            </td>
+            <td>
+                <p ><span >Morocco</span></p>
+            </td>
+            <td>
+                <p ><span >Swaziland</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Bhutan</span></p>
+            </td>
+            <td>
+                <p ><span >Guadeloupe</span></p>
+            </td>
+            <td>
+                <p ><span >Mozambique</span></p>
+            </td>
+            <td>
+                <p ><span >Sweden</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Bolivia, Plurinational State of</span>
+                </p>
+            </td>
+            <td>
+                <p ><span >Guam</span></p>
+            </td>
+            <td>
+                <p ><span >Myanmar</span></p>
+            </td>
+            <td>
+                <p ><span >Switzerland</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Bonaire, Sint Eustatius and Saba</span>
+                </p>
+            </td>
+            <td>
+                <p ><span >Guatemala</span></p>
+            </td>
+            <td>
+                <p ><span >Namibia</span></p>
+            </td>
+            <td>
+                <p ><span >Syrian Arab Republic</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Bosnia and Herzegovina</span></p>
+            </td>
+            <td>
+                <p ><span >Guernsey</span></p>
+            </td>
+            <td>
+                <p ><span >Nauru</span></p>
+            </td>
+            <td>
+                <p ><span >Taiwan, Province of China</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Botswana</span></p>
+            </td>
+            <td>
+                <p ><span >Guinea</span></p>
+            </td>
+            <td>
+                <p ><span >Nepal</span></p>
+            </td>
+            <td>
+                <p ><span >Tajikistan</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Bouvet Island</span></p>
+            </td>
+            <td>
+                <p ><span >Guinea-Bissau</span></p>
+            </td>
+            <td>
+                <p ><span >Netherlands</span></p>
+            </td>
+            <td>
+                <p ><span >Tanzania, United Republic of</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Brazil</span></p>
+            </td>
+            <td>
+                <p ><span >Guyana</span></p>
+            </td>
+            <td>
+                <p ><span >New Caledonia</span></p>
+            </td>
+            <td>
+                <p ><span >Thailand</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >British indian Ocean Territory</span></p>
+            </td>
+            <td>
+                <p ><span >Haiti</span></p>
+            </td>
+            <td>
+                <p ><span >New Zealand</span></p>
+            </td>
+            <td>
+                <p ><span >Timor-Leste</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Brunei Darussalam</span></p>
+            </td>
+            <td>
+                <p ><span >Heard Island and McDonald islands</span>
+                </p>
+            </td>
+            <td>
+                <p ><span >Nicaragua</span></p>
+            </td>
+            <td>
+                <p ><span >Togo</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Bulgaria</span></p>
+            </td>
+            <td>
+                <p ><span >Holy See (Vatican City State)</span></p>
+            </td>
+            <td>
+                <p ><span >Niger</span></p>
+            </td>
+            <td>
+                <p ><span >Tokelau</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Burkina Faso</span></p>
+            </td>
+            <td>
+                <p ><span >Honduras</span></p>
+            </td>
+            <td>
+                <p ><span >Nigeria</span></p>
+            </td>
+            <td>
+                <p ><span >Tonga</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Burundi</span></p>
+            </td>
+            <td>
+                <p ><span >Hong Kong</span></p>
+            </td>
+            <td>
+                <p ><span >Nive</span></p>
+            </td>
+            <td>
+                <p ><span >Trinidad and Tobago</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Cabo Verde</span></p>
+            </td>
+            <td>
+                <p ><span >Hungary</span></p>
+            </td>
+            <td>
+                <p ><span >Norfolk Island</span></p>
+            </td>
+            <td>
+                <p ><span >Tunisia</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Cambodia</span></p>
+            </td>
+            <td>
+                <p ><span >iceland</span></p>
+            </td>
+            <td>
+                <p ><span >Northern Mariana islands</span></p>
+            </td>
+            <td>
+                <p ><span >Turkey</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Cameroon</span></p>
+            </td>
+            <td>
+                <p ><span >india</span></p>
+            </td>
+            <td>
+                <p ><span >Norway</span></p>
+            </td>
+            <td>
+                <p ><span >Turkmenistan</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Canada</span></p>
+            </td>
+            <td>
+                <p ><span >Indonesia</span></p>
+            </td>
+            <td>
+                <p ><span >Oman</span></p>
+            </td>
+            <td>
+                <p ><span >Turks and Caicos Islands</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Cayman islands</span></p>
+            </td>
+            <td>
+                <p ><span >iran, islamic Republic of</span></p>
+            </td>
+            <td>
+                <p ><span >Pakistan</span></p>
+            </td>
+            <td>
+                <p ><span >Tuvalu</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Central African Republic</span></p>
+            </td>
+            <td>
+                <p ><span >iraq</span></p>
+            </td>
+            <td>
+                <p ><span >Palau</span></p>
+            </td>
+            <td>
+                <p ><span >Uganda</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >&#xa0;</span></p>
+            </td>
+            <td>
+                <p ><span >treland</span></p>
+            </td>
+            <td>
+                <p ><span >Palestine, State of</span></p>
+            </td>
+            <td>
+                <p ><span >Ukraine</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >&#xa0;</span></p>
+            </td>
+            <td>
+                <p ><span >isle of Man</span></p>
+            </td>
+            <td>
+                <p ><span >Panama</span></p>
+            </td>
+            <td>
+                <p ><span >United Arab Emirates</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >&#xa0;</span></p>
+            </td>
+            <td>
+                <p ><span >israel</span></p>
+            </td>
+            <td>
+                <p ><span >Papua New Guinea</span></p>
+            </td>
+            <td>
+                <p ><span >United Kingdorn</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >&#xa0;</span></p>
+            </td>
+            <td>
+                <p ><span >italy</span></p>
+            </td>
+            <td>
+                <p ><span >Paraguay</span></p>
+            </td>
+            <td>
+                <p ><span >United States</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Cocos (Keeling) islands</span></p>
+            </td>
+            <td>
+                <p ><span >Jamaica</span></p>
+            </td>
+            <td>
+                <p ><span >Peru</span></p>
+            </td>
+            <td>
+                <p ><span >United States Minor Outlying
+                        Islands</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Colombia</span></p>
+            </td>
+            <td>
+                <p ><span >Japan</span></p>
+            </td>
+            <td>
+                <p ><span >Philippines</span></p>
+            </td>
+            <td>
+                <p ><span >Uruguay</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Cormoros</span></p>
+            </td>
+            <td>
+                <p ><span >Jersey</span></p>
+            </td>
+            <td>
+                <p ><span >Pitcairn</span></p>
+            </td>
+            <td>
+                <p ><span >Uzbekistan</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Congo</span></p>
+            </td>
+            <td>
+                <p ><span >Jordan</span></p>
+            </td>
+            <td>
+                <p ><span >Poland</span></p>
+            </td>
+            <td>
+                <p ><span >Vanuatu</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Congo, the Dernocratic Republic of</span>
+                </p>
+                <p ><span >the</span></p>
+            </td>
+            <td>
+                <p ><span >Kazakhstan</span></p>
+            </td>
+            <td>
+                <p ><span >Portugal</span></p>
+            </td>
+            <td>
+                <p ><span >Venezuela, Bolivarian Republic of</span>
+                </p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Cook islands</span></p>
+            </td>
+            <td>
+                <p ><span >Kenya</span></p>
+            </td>
+            <td>
+                <p ><span >Puerto Rico</span></p>
+            </td>
+            <td>
+                <p ><span >Viet Nam</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Costa Rica</span></p>
+            </td>
+            <td>
+                <p ><span >Kiribati</span></p>
+            </td>
+            <td>
+                <p ><span >Qatar</span></p>
+            </td>
+            <td>
+                <p ><span >Virgin islands, British</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Cote d'ivoire !Céte d'ivoire</span></p>
+            </td>
+            <td>
+                <p ><span >Korea, Democratic People's
+                        Republic</span></p>
+                <p ><span >of</span></p>
+            </td>
+            <td>
+                <p ><span >Reunion [Réunion</span></p>
+            </td>
+            <td>
+                <p ><span >Virgin Islands, U.S.</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Croatia</span></p>
+            </td>
+            <td>
+                <p ><span >Korea, Republic of</span></p>
+            </td>
+            <td>
+                <p ><span >Romania</span></p>
+            </td>
+            <td>
+                <p ><span >Wallis and Futuna</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Cuba</span></p>
+            </td>
+            <td>
+                <p ><span >Kuwait</span></p>
+            </td>
+            <td>
+                <p ><span >Russian Federation</span></p>
+            </td>
+            <td>
+                <p ><span >Western Sahara</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Curacao !Curacao</span></p>
+            </td>
+            <td>
+                <p ><span >Kyrgyzstan</span></p>
+            </td>
+            <td>
+                <p ><span >Rwanda</span></p>
+            </td>
+            <td>
+                <p ><span >Yemen</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Cyprus</span></p>
+            </td>
+            <td>
+                <p ><span >Lao People’s Democratic Republic</span>
+                </p>
+            </td>
+            <td>
+                <p ><span >Saint Barthelemy [Saint Barthélemy</span>
+                </p>
+            </td>
+            <td>
+                <p ><span >Zambia</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Czech Republic</span></p>
+            </td>
+            <td>
+                <p ><span >Latvia</span></p>
+            </td>
+            <td>
+                <p ><span >Saint Helena, Ascension and Tristan
+                        da</span></p>
+                <p ><span >Cunha</span></p>
+            </td>
+            <td>
+                <p ><span >Zimbabwe</span></p>
+            </td>
+        </tr>
+        <tr >
+            <td>
+                <p ><span >Denmark</span></p>
+            </td>
+            <td>
+                <p ><span >Lebanon</span></p>
+            </td>
+            <td>
+                <p ><span >Saint Kitts and Nevis</span></p>
+            </td>
+            <td>
+                <p ><span >&#xa0;</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Djibouti</span></p>
+            </td>
+            <td>
+                <p ><span >Lesotho</span></p>
+            </td>
+            <td>
+                <p ><span >Saint Lucia</span></p>
+            </td>
+            <td>
+                <p ><span >&#xa0;</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p ><span >Dominica</span></p>
+            </td>
+            <td>
+                <p ><span >Liberia</span></p>
+            </td>
+            <td>
+                <p ><span >Saint Martin (French part)</span></p>
+            </td>
+            <td>
+                <p ><span >&#xa0;</span></p>
+            </td>
+        </tr>
+    </table>
+    </div>
+    
 </body>           
 </html>
