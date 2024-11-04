@@ -224,8 +224,68 @@
             9. <b>ATTESTATION / FOR OFFICE USE ONLY</b> 
         </h3>
     </div>
-    <div class="attestation" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;">
-        <!-- <input type="checkbox" name="" id=""> -->
+    <div class="container-attestation" style="background-color: antiquewhite;height: fit-content;padding: 10px;">
+        <div class="row" style="width: 100%;">
+            <b>Documents Received</b>&nbsp;&nbsp; <input type="checkbox" name="certi-cpoy" id="certi-cpoy"><label for="certi-cpoy">Certified Copies</label>
+        </div>
+        <div class="row" style="display: flex;">
+            <div class="col" style="width: 50%;margin-top: 8px;">
+                <div class="row">
+                    <div class="container" style="padding: 7px;background-color: rgb(216, 201, 181);margin: 3px;">
+                        KYC VERIFICATION CARRIED OUT BY
+                    </div>
+                </div>
+                <div class="row">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%;">Date</td>
+                            <td style="width: 50%;">
+                                <div style="display: flex;" class="dates-column-div">
+                                    <input type="text" style="border: 1px solid rgb(194, 194, 194);width:15px">
+                                    <input type="text" style="border: 1px solid rgb(194, 194, 194);width:15px">
+                                    &nbsp;<span style="color: rgb(149, 149, 149);">--</span>&nbsp
+                                    <input type="text" style="border: 1px solid rgb(194, 194, 194);width:15px">
+                                    <input type="text" style="border: 1px solid rgb(194, 194, 194);width:15px">
+                                    &nbsp;<span style="color: rgb(149, 149, 149);">--</span>&nbsp
+                                    <input type="text" style="border: 1px solid rgb(194, 194, 194);width:15px">
+                                    <input type="text" style="border: 1px solid rgb(194, 194, 194);width:15px">
+                                    <input type="text" style="border: 1px solid rgb(194, 194, 194);width:15px">
+                                    <input type="text" style="border: 1px solid rgb(194, 194, 194);width:15px">
+
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Emp. Name</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Emp. Code</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Emp. Designation</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Emp. Branch</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col"  style="width: 50%;margin-top: 11px;">
+                <div class="container" style="padding: 7px;background-color: rgb(216, 201, 181);">
+                    INSTITUTION DETAILS
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="attestation" style="width: 100%;background-color: orange;height: 30px;display: flex; align-items: center;margin-top: 10px;">
         <h3 style="color: white;padding-top: 4px;text-align: center;padding-left: 8px;">
             <b>CENTRAL KYC REGISTRY | Instructions / Check list / Guidelines for filling Individual KYC Application Form</b> 
         </h3>
@@ -236,7 +296,7 @@
             <b>General Instruction</b>
             <ol start="1">
                 <li>Fields marked with ‘*’ are mandatory fields.</li>
-                <li>Tick ‘’ wherever applicable. </li>
+                <li>Tick ‘&#10003;’ wherever applicable. </li>
                 <li>Self-Certification of documents is mandatory. </li>
                 <li>Please fill the form in English and in BLOCK Letters. </li>
                 <li>Please fill all dates in DD-MM-YYYY format</li>
@@ -248,15 +308,128 @@
             </ol>
         </div>
         <div class="row">
-            <ol start="A">
-                <li>Clarification / Guidelines on filling ‘Personal Details’ section</li>
-                <li>Clarification / Guidelines on filling details if applicant residence for tax purposes in jurisdiction(s) outside India</li>
-                <li>Clarification / Guidelines on filling ‘Proof of Identity [PoI]’ section</li>
-                <li>Clarification / Guidelines on filling ‘Proof of Address [PoA] - Current / Permanent / Overseas Address details’ section</li>
-                <li>Clarification / Guidelines on filling ‘Proof of Address [PoA] - Correspondence / Local Address details’ section</li>
-                <li>Clarification / Guidelines on filling ‘Contact details’ section </li>
-                <li>Clarification / Guidelines on filling ‘Related Person details’ section</li>
-                <li>Clarification / Guidelines on filling ‘Related Person details – Proof of Identity [PoI] of Related Person’ section</li>
+            <ol type="A">
+                <li>
+                    <b>Clarification / Guidelines on filling ‘Personal Details’ section</b>
+                    <ol>
+                        <li>
+                            <b>Name:</b>Please state the name with Prefix (Mr/Mrs/Ms/Dr/etc.). The name should match the name as mentioned in the Proof of Identity submitted failing which the
+                            application is liable to be rejected.
+                        </li>
+                        <li>
+                            Either <b>father’s name or spouse’s name</b> is to be mandatorily furnished. In case PAN is not available father’s name is mandatory
+                        </li>
+                    </ol>
+                </li>
+                <li>
+                    <b>Clarification / Guidelines on filling details if applicant residence for tax purposes in jurisdiction(s) outside India</b>
+                    <ol>
+                        <li>
+                            <b>Tax identification Number (TIN):</b>TIN need not be reported if it has not been issued by the jurisdiction. However, if the said jurisdiction has issued a high integrity
+                            number with an equivalent level of identification (a “Functional equivalent”), the same may be reported. Examples of that type of number for individual include, a social
+                            security/insurance number, citizen/personal identification/services code/number, and resident registration number. 
+                        </li>
+                    </ol>
+                </li>
+                <li>
+                    <b>Clarification / Guidelines on filling ‘Proof of Identity [PoI]’ section</b>
+                    <ol>
+                        <li>If driving license number or passport is provided as proof of identity then expiry date is to be mandatorily furnished.</li>
+                        <li>Mention identification / reference number if ‘Z- Others (any document notified by the central government)’ is ticked.</li>
+                        <li>In case of Simplified Measures Accounts for verifying the identity of the applicant, any one of the following documents can also be submitted and undernoted relevant
+                            code may be mentioned in point 3 (S).
+                            <table>
+                                <tr style="background-color: antiquewhite;">
+                                    <th style="width: 35%;">Document Code</th>
+                                    <th style="width: 65%;"> Description </th>
+                                </tr>
+                                <tr>
+                                    <td>01</td>
+                                    <td>Identity card with applicant’s photograph issued by Central/ State Government Departments, Statutory/ Regulatory Authorities, Public Sector
+                                        Undertakings, Scheduled Commercial Banks, and Public Financial Institutions.</td>
+                                </tr>
+                                <tr>
+                                    <td>02 </td>
+                                    <td>Letter issued by a gazetted officer, with a duly attested photograph of the person</td>
+                                </tr>
+                            </table>
+                        </li>
+                    </ol>
+                </li>
+                <li>
+                    <b>Clarification / Guidelines on filling ‘Proof of Address [PoA] - Current / Permanent / Overseas Address details’ section</b>
+                    <ol>
+                        <li>PoA to be submitted only if the submitted PoI does not have an address or address as per PoI is invalid or not in force.</li>
+                        <li>State / U.T Code and Pin / Post Code will not be mandatory for Overseas addresses.</li>
+                        <li>In case of Simplified Measures Accounts for verifying the address of the applicant, any one of the following documents can also be submitted and undernoted relevant
+                            code may be mentioned in point 4.1
+                            <table>
+                                <tr style="background-color: antiquewhite;">
+                                    <th>Document Code</th>
+                                    <th>Description</th>
+                                </tr>
+                                <tr>
+                                    <td>01</td>
+                                    <td>Utility bill which is not more than two months old of any service provider (electricity, telephone, post-paid mobile phone, piped gas, water
+                                        bill).</td>
+                                </tr>
+                                <tr>
+                                    <td>02</td>
+                                    <td>Property or Municipal Tax receipt.</td>
+                                </tr>
+                                <tr>
+                                    <td>03</td>
+                                    <td>Bank account or Post Office savings bank account statement.</td>
+                                </tr>
+                                <tr>
+                                    <td>04</td>
+                                    <td>Pension or family pension payment orders (PPOs) issued to retired employees by Government Departments or Public Sector Undertakings, if
+                                        they contain the address.</td>
+                                </tr>
+                                <tr>
+                                    <td>05</td>
+                                    <td>Letter of allotment of accommodation from employer issued by State or Central Government departments, statutory or regulatory bodies,
+                                        public sector undertakings, scheduled commercial banks, financial institutions and listed companies. Similarly, leave and license agreements
+                                        with such employers allotting official accommodation</td>
+                                </tr>
+                                <tr>
+                                    <td>06</td>
+                                    <td>Documents issued by Government departments of foreign jurisdictions and letter issued by Foreign Embassy or Mission in India.                                    </td>
+                                </tr>
+                            </table>
+                        </li>
+                    </ol>
+                </li>
+                <li>
+                    <b>Clarification / Guidelines on filling ‘Proof of Address [PoA] - Correspondence / Local Address details’ section</b>
+                    <ol>
+                        <li>
+                            To be filled only in case the PoA is not the local address or address where the customer is currently residing. No separate PoA is required to be submitted. 
+                        </li>
+                        <li>
+                            In case of multiple correspondence / local addresses, Please fill ‘Annexure A1’ 
+                        </li>
+                    </ol>
+                </li>
+                <li>
+                    <b>Clarification / Guidelines on filling ‘Contact details’ section </b>
+                    <ol>
+                        <li>Please mention two- digit country code and 10 digit mobile number (e.g. for Indian mobile number mention 91-9999999999). </li>
+                        <li>Do not add ‘0’ in the beginning of Mobile number.</li>
+                    </ol>
+                </li>
+                <li>
+                    <b>Clarification / Guidelines on filling ‘Related Person details’ section</b>
+                    <ol>
+                        <li>Provide KYC number of related person if available.</li>
+                    </ol>
+                </li>
+                <li>
+                    <b>Clarification / Guidelines on filling ‘Related Person details – Proof of Identity [PoI] of Related Person’ section</b>
+                    <ol>
+                        <li>Mention identification / reference number if ‘Z- Others (any document notified by the central government)’ is ticked.</li>
+                    </ol>
+                </li>
             </ol>
         </div>
     </div>
