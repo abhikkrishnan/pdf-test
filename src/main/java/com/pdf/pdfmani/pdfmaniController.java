@@ -8,14 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.tomcat.util.json.JSONParser;
 
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200") 
 public class pdfmaniController {
 
     @Autowired
@@ -166,19 +171,16 @@ public class pdfmaniController {
                 .body(pdfContent);
     }
 
-    @GetMapping("/generate-kyc-document")
-    public ResponseEntity<byte[]> generate_kyc_doc() throws IOException {
+    @PostMapping("api/v0/add-texts")
+    public String add_texts(@RequestBody Object[] texts ) throws IOException {
 
-        byte[] pdfContent = pdfService.generateCKYCPdf();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "sample.pdf");
+        // System.out.println("Received texts: " + Arrays.toString(texts));
 
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(pdfContent);
+        return pdfService.add_text(texts);
     }
+
+
 
     
 }
